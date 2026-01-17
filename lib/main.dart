@@ -86,8 +86,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 TextButton(
                   onPressed: () => scrollToSection(personalKey),
-                  child: Text(
-                    'Personal-Info',
+                  child: const Text(
+                    "Personal-Info",
                     style: TextStyle(fontFamily: 'MomoTrustDisplay'),
                   ),
                 ),
@@ -100,8 +100,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 TextButton(
                   onPressed: () => scrollToSection(portfolioKey),
-                  child: Text(
-                    'Portfolio',
+                  child: const Text(
+                    "Portfolio",
                     style: TextStyle(fontFamily: 'MomoTrustDisplay'),
                   ),
                 ),
@@ -117,23 +117,31 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: isMobile(context)
-          ? MobileLayout(
-              homeKey: homeKey,
-              aboutKey: aboutKey,
-              personalKey: personalKey,
-              projectsKey: projectsKey,
-              portfolioKey: portfolioKey,
-              contactKey: contactKey,
-            )
-          : DesktopLayout(
-              homeKey: homeKey,
-              aboutKey: aboutKey,
-              personalKey: personalKey,
-              projectsKey: projectsKey,
-              portfolioKey: portfolioKey,
-              contactKey: contactKey,
-            ),
+
+      // ✅ BODY must be inside Scaffold, after appBar, with a comma above and below
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isMobile = constraints.maxWidth < 600;
+
+          return isMobile
+              ? MobileLayout(
+                  homeKey: homeKey,
+                  aboutKey: aboutKey,
+                  personalKey: personalKey,
+                  projectsKey: projectsKey,
+                  portfolioKey: portfolioKey,
+                  contactKey: contactKey,
+                )
+              : DesktopLayout(
+                  homeKey: homeKey,
+                  aboutKey: aboutKey,
+                  personalKey: personalKey,
+                  projectsKey: projectsKey,
+                  portfolioKey: portfolioKey,
+                  contactKey: contactKey,
+                );
+        },
+      ),
     );
   }
 }
