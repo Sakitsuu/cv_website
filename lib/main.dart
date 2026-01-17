@@ -41,7 +41,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String logo_TC = 'assets/TC_logo.png';
+  bool isMobile(BuildContext context) {
+    return MediaQuery.of(context).size.width < 600;
+  }
+
+  final String logo_TC = 'assets/TC_logo.png';
 
   final ScrollController _scrollController = ScrollController();
 
@@ -57,105 +61,79 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Row(
+        title: Wrap(
           children: <Widget>[
             SizedBox(width: 75, height: 75, child: Image.asset(logo_TC)),
-            Text(
-              widget.title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: () => scrollToSection(homeKey),
-            child: const Text(
-              "Home",
-              style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-            ),
-          ),
-          TextButton(
-            onPressed: () => scrollToSection(aboutKey),
-            child: const Text(
-              "About",
-              style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-            ),
-          ),
-          TextButton(
-            onPressed: () => scrollToSection(personalKey),
-            child: Text(
-              'Personal-Info',
-              style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-            ),
-          ),
-          TextButton(
-            onPressed: () => scrollToSection(projectsKey),
-            child: const Text(
-              "Projects",
-              style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-            ),
-          ),
-          TextButton(
-            onPressed: () => scrollToSection(portfolioKey),
-            child: Text(
-              'Portfolio',
-              style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-            ),
-          ),
-          TextButton(
-            onPressed: () => scrollToSection(contactKey),
-            child: const Text(
-              "Referees",
-              style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+          Flexible(
+            child: Wrap(
+              children: <Widget>[
+                TextButton(
+                  onPressed: () => scrollToSection(homeKey),
+                  child: const Text(
+                    "Home",
+                    style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => scrollToSection(aboutKey),
+                  child: const Text(
+                    "About",
+                    style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => scrollToSection(personalKey),
+                  child: Text(
+                    'Personal-Info',
+                    style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => scrollToSection(projectsKey),
+                  child: const Text(
+                    "Projects",
+                    style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => scrollToSection(portfolioKey),
+                  child: Text(
+                    'Portfolio',
+                    style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => scrollToSection(contactKey),
+                  child: const Text(
+                    "Referees",
+                    style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Container(
-              key: homeKey,
-              padding: const EdgeInsets.symmetric(vertical: 80),
-              child: const HomeSite(),
+      body: isMobile(context)
+          ? MobileLayout(
+              homeKey: homeKey,
+              aboutKey: aboutKey,
+              personalKey: personalKey,
+              projectsKey: projectsKey,
+              portfolioKey: portfolioKey,
+              contactKey: contactKey,
+            )
+          : DesktopLayout(
+              homeKey: homeKey,
+              aboutKey: aboutKey,
+              personalKey: personalKey,
+              projectsKey: projectsKey,
+              portfolioKey: portfolioKey,
+              contactKey: contactKey,
             ),
-            Container(
-              key: aboutKey,
-              alignment: Alignment.center,
-              height: 600,
-              child: const AboutSite(),
-            ),
-            Container(
-              key: personalKey,
-              height: 700,
-              alignment: Alignment.center,
-              child: const PersonalSite(),
-            ),
-            Container(
-              key: projectsKey,
-              alignment: Alignment.center,
-              height: 200,
-              child: const ProjectSite(),
-            ),
-            Container(
-              key: portfolioKey,
-              height: 1146,
-              alignment: Alignment.center,
-              child: const PortfolioSite(),
-            ),
-            Container(
-              key: contactKey,
-              height: 500,
-              alignment: Alignment.center,
-              child: const RefereeSite(),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -167,6 +145,71 @@ void scrollToSection(GlobalKey key) {
       context,
       duration: const Duration(milliseconds: 500),
       curve: Curves.easeInOut,
+    );
+  }
+}
+
+class DesktopLayout extends StatelessWidget {
+  final GlobalKey homeKey;
+  final GlobalKey aboutKey;
+  final GlobalKey personalKey;
+  final GlobalKey projectsKey;
+  final GlobalKey portfolioKey;
+  final GlobalKey contactKey;
+
+  const DesktopLayout({
+    super.key,
+    required this.homeKey,
+    required this.aboutKey,
+    required this.personalKey,
+    required this.projectsKey,
+    required this.portfolioKey,
+    required this.contactKey,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      controller: ScrollController(),
+      child: Column(
+        children: <Widget>[
+          Container(
+            key: homeKey,
+            padding: const EdgeInsets.symmetric(vertical: 80),
+            child: const HomeSite(),
+          ),
+          Container(
+            key: aboutKey,
+            alignment: Alignment.center,
+            height: 600,
+            child: const AboutSite(),
+          ),
+          Container(
+            key: personalKey,
+            height: 700,
+            alignment: Alignment.center,
+            child: const PersonalSite(),
+          ),
+          Container(
+            key: projectsKey,
+            alignment: Alignment.center,
+            height: 200,
+            child: const ProjectSite(),
+          ),
+          Container(
+            key: portfolioKey,
+            height: 1146,
+            alignment: Alignment.center,
+            child: const PortfolioSite(),
+          ),
+          Container(
+            key: contactKey,
+            height: 500,
+            alignment: Alignment.center,
+            child: const RefereeSite(),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -681,7 +724,7 @@ class PersonalSite extends StatelessWidget {
                                   color: Colors.blue,
                                 ),
                                 child: Icon(
-                                  Icons.home,
+                                  Icons.person,
                                   size: 50,
                                   color: Colors.black,
                                 ),
@@ -1220,6 +1263,1151 @@ class RefereeSite extends StatelessWidget {
                             Flexible(child: Icon(Icons.email)),
                             SizedBox(width: 5),
                             Flexible(child: Text('muysengly@gmail.com')),
+                          ],
+                        ),
+                        SizedBox(height: 25),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(width: 20),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MobileLayout extends StatelessWidget {
+  final GlobalKey homeKey;
+  final GlobalKey aboutKey;
+  final GlobalKey personalKey;
+  final GlobalKey projectsKey;
+  final GlobalKey portfolioKey;
+  final GlobalKey contactKey;
+
+  const MobileLayout({
+    super.key,
+    required this.homeKey,
+    required this.aboutKey,
+    required this.personalKey,
+    required this.projectsKey,
+    required this.portfolioKey,
+    required this.contactKey,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      controller: ScrollController(),
+      child: Column(
+        children: <Widget>[
+          Container(
+            key: homeKey,
+            padding: const EdgeInsets.symmetric(vertical: 80),
+            child: const MobileHome(),
+          ),
+          Container(
+            key: aboutKey,
+            alignment: Alignment.center,
+            height: 1100,
+            child: const MobileAbout(),
+          ),
+          Container(
+            key: personalKey,
+            height: 820,
+            alignment: Alignment.center,
+            child: const MobielPersonalInfo(),
+          ),
+          Container(
+            key: projectsKey,
+            alignment: Alignment.center,
+            height: 200,
+            child: const MobileProject(),
+          ),
+          Container(
+            key: portfolioKey,
+            height: 650,
+            alignment: Alignment.center,
+            child: const MobilePortfolio(),
+          ),
+          Container(
+            key: contactKey,
+            height: 400,
+            alignment: Alignment.center,
+            child: const MobileReferees(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MobileHome extends StatelessWidget {
+  const MobileHome({super.key});
+
+  final String photo = "assets/my_image.png";
+
+  final String FB = "assets/Facebook_Logo.png";
+  final String GIT = "assets/GitHub_Logo.png";
+  final String LinkedIn = "assets/Linkedin_Logo.png";
+  final String Telegram = "assets/Telegram_Logo.png";
+
+  Future<void> _launchUrl(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
+    }
+  }
+
+  void _openCV() {
+    _launchUrl('/cv/my_cv.pdf');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(width: 20),
+                      Container(
+                        padding: EdgeInsets.all(16),
+                        margin: EdgeInsets.all(8),
+                        width: 400,
+                        height: 400,
+                        decoration: BoxDecoration(shape: BoxShape.circle),
+                        child: Image.asset(photo),
+                      ),
+                      SizedBox(width: 20),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      SizedBox(width: 50),
+                      Icon(Icons.waving_hand_rounded, color: Colors.amber),
+                      SizedBox(width: 10),
+                      Text(
+                        'Hi! I\'m ',
+                        style: TextStyle(
+                          fontFamily: 'MomoTrustDisplay',
+                          fontSize: 15,
+                        ),
+                      ),
+                      Text(
+                        'Try Chansak',
+                        style: TextStyle(
+                          fontFamily: 'MomoTrustDisplay',
+                          color: Colors.blue,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      SizedBox(width: 50),
+                      Text(
+                        'Telecommunication and Network Engineering',
+                        style: TextStyle(
+                          fontFamily: 'MomoTrustDisplay',
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      SizedBox(width: 50),
+                      Flexible(
+                        child: Text(
+                          'I am passionate about advancing software and network development by designing efficient, secure, and scalable solutions that solve real-world problems.',
+                          style: TextStyle(
+                            fontFamily: 'MomoTrustDisplay',
+                            fontSize: 10,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      SizedBox(width: 50),
+                      Text('Follow me'),
+                      Wrap(
+                        children: <Widget>[
+                          SizedBox(width: 5),
+                          TextButton(
+                            onPressed: () {
+                              _launchUrl(
+                                'https://www.facebook.com/share/17rnzk3dEJ/?mibextid=wwXIfr',
+                              );
+                            },
+                            child: SizedBox(
+                              width: 50,
+                              height: 100,
+                              child: Image.asset(FB),
+                            ),
+                          ),
+                          SizedBox(width: 5),
+                          TextButton(
+                            onPressed: () {
+                              _launchUrl('https://github.com/Sakitsuu');
+                            },
+                            child: SizedBox(
+                              width: 50,
+                              height: 100,
+                              child: Image.asset(GIT),
+                            ),
+                          ),
+                          SizedBox(width: 5),
+                          TextButton(
+                            onPressed: () {
+                              _launchUrl(
+                                'https://www.linkedin.com/in/chansak-try-4a5b66373/',
+                              );
+                            },
+                            child: SizedBox(
+                              width: 50,
+                              height: 100,
+                              child: Image.asset(LinkedIn),
+                            ),
+                          ),
+                          SizedBox(width: 5),
+                          TextButton(
+                            onPressed: () {
+                              _launchUrl('https://t.me/Sak_smos');
+                            },
+                            child: SizedBox(
+                              width: 50,
+                              height: 100,
+                              child: Image.asset(Telegram),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      SizedBox(width: 50),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.purple[600],
+                        ),
+                        onPressed: () {
+                          _openCV();
+                        },
+                        child: Text('View CV'),
+                      ),
+                      SizedBox(width: 20),
+                      OutlinedButton(
+                        onPressed: () {
+                          _launchUrl('cv/my_cv.pdf');
+                        },
+                        child: Text('Download CV'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MobileAbout extends StatelessWidget {
+  const MobileAbout({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Container(
+        height: 1100,
+        width: 600,
+        decoration: BoxDecoration(color: Color(0xFF0E0F1A)),
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 10),
+            Text(
+              'About me',
+              style: TextStyle(fontFamily: 'MomoTrustDisplay', fontSize: 25),
+            ),
+            SizedBox(
+              width: 75,
+              child: Divider(thickness: 10, color: Colors.blue),
+            ),
+            SizedBox(height: 25),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    SizedBox(width: 20),
+                    Flexible(
+                      child: Text(
+                        'My name is Try Chansak, and I am a student at the Institute of Technology of Cambodia, majoring in Telecommunication and Network Engineering. I am highly passionate about technology and have hands-on experience in development through my work in DC Lab and Fab Lab. I am committed to continuously improving my skills and knowledge and will dedicate my best efforts to ensuring the success of every project I undertake.',
+                      ),
+                    ),
+                    SizedBox(width: 20),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Row(
+                  children: <Widget>[
+                    SizedBox(width: 20),
+                    Text(
+                      'chansaktry168@gmail.com',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 25),
+            Row(
+              children: <Widget>[
+                SizedBox(width: 20),
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    margin: EdgeInsets.all(8),
+                    height: 375,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.black,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Colors.teal,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(Icons.code),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'Software Development',
+                          style: TextStyle(
+                            fontFamily: 'MomoTrustDisplay',
+                            fontSize: 12,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Text(
+                          'Turn ideas into functional applications by designing, developing, and maintaining efficient software systems that solve real-world problems.',
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    margin: EdgeInsets.all(8),
+                    height: 375,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.black,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Colors.purple,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(Icons.router),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'Network Engineering',
+                          style: TextStyle(
+                            fontFamily: 'MomoTrustDisplay',
+                            fontSize: 12,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Text(
+                          'Plan and implement secure, high-performance communication networks to ensure reliable data transmission and system connectivity.',
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    margin: EdgeInsets.all(8),
+                    height: 375,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.black,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(Icons.cell_tower),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'Telecommunication Systems',
+                          style: TextStyle(
+                            fontFamily: 'MomoTrustDisplay',
+                            fontSize: 12,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Text(
+                          'Work with telecommunication systems to support wireless, wired, and digital communication solutions for real-time connectivity.',
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(width: 20),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(height: 50),
+                Text(
+                  '2+',
+                  style: TextStyle(
+                    fontSize: 100,
+                    fontFamily: 'MomoTrustDisplay',
+                  ),
+                ),
+                Text(
+                  'Lab',
+                  style: TextStyle(
+                    fontSize: 50,
+                    fontFamily: 'MomoTrustDisplay',
+                  ),
+                ),
+                Text(
+                  'Projects',
+                  style: TextStyle(
+                    fontSize: 50,
+                    fontFamily: 'MomoTrustDisplay',
+                  ),
+                ),
+                Text(
+                  'Experience',
+                  style: TextStyle(
+                    fontSize: 50,
+                    fontFamily: 'MomoTrustDisplay',
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MobielPersonalInfo extends StatelessWidget {
+  const MobielPersonalInfo({super.key});
+
+  final String me = "assets/me.JPG";
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          SizedBox(height: 20),
+          Text(
+            'Personal Information',
+            style: TextStyle(fontFamily: 'MomoTrustDisplay', fontSize: 25),
+          ),
+          SizedBox(
+            width: 75,
+            child: Divider(thickness: 10, color: Colors.blue),
+          ),
+          SizedBox(height: 25),
+          Row(
+            children: <Widget>[
+              SizedBox(width: 20),
+              Flexible(
+                child: Text(
+                  'Here you can find my personal details such as my age, birthplace, and general background information.',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(width: 350, height: 350, child: Image.asset(me)),
+            ],
+          ),
+          SizedBox(height: 25),
+          Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          margin: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.amber,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(Icons.cake),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'Birth of Date:',
+                          style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                        ),
+                        Text(
+                          '19/July/2004',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          margin: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(Icons.person),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'Gender:',
+                          style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                        ),
+                        Text('Male', style: TextStyle(color: Colors.grey)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          margin: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.pink,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(Icons.person),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'Birthplace:',
+                          style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                        ),
+                        Text('Kampot', style: TextStyle(color: Colors.grey)),
+                        SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          margin: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.purple,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(Icons.person),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'Address:',
+                          style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                        ),
+                        Row(
+                          children: <Widget>[
+                            SizedBox(width: 10),
+                            Flexible(
+                              child: Text(
+                                'Sola Str(371), Ou Baek K\'am, Sen Sok, Phnom Penh',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MobileProject extends StatelessWidget {
+  const MobileProject({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Row(
+                  children: <Widget>[
+                    SizedBox(width: 20),
+                    Icon(Icons.alarm, color: Colors.amber, size: 40),
+                    SizedBox(width: 10),
+                    Text(
+                      'In Time Projects',
+                      style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Row(
+                  children: <Widget>[
+                    SizedBox(width: 20),
+                    Icon(Icons.check_circle, color: Colors.blue, size: 40),
+                    SizedBox(width: 10),
+                    Text(
+                      'Project Done',
+                      style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      '+1',
+                      style: TextStyle(
+                        fontFamily: 'MomoTrustDisplay',
+                        fontSize: 25,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text('Years of Experience'),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      '+5',
+                      style: TextStyle(
+                        fontFamily: 'MomoTrustDisplay',
+                        fontSize: 25,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text('Project Completed'),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      '+5',
+                      style: TextStyle(
+                        fontFamily: 'MomoTrustDisplay',
+                        fontSize: 25,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text('Project Approved'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MobilePortfolio extends StatelessWidget {
+  const MobilePortfolio({super.key});
+  final String about_me_web = "assets/about_me_web_design_pic.jpg";
+  final String employee_management =
+      "assets/employee_management_system_pic.jpg";
+  final String puzzle_memory = "assets/puzzle_memory_game_pic.png";
+  final String smart_home = "assets/smart_home_pic.png";
+  final String smart_watering = "assets/smart_watering_system_pic.jpg";
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          Text(
+            'Portfolio',
+            style: TextStyle(fontFamily: 'MomoTrustDisplay', fontSize: 25),
+          ),
+          SizedBox(height: 10),
+          Container(
+            width: 75,
+            child: Divider(thickness: 10, color: Colors.blue),
+          ),
+          SizedBox(height: 20),
+          Row(
+            children: <Widget>[
+              SizedBox(width: 15),
+              Flexible(
+                child: Text(
+                  'I create innovative and user-friendly software and network solutions that combine functionality, creativity, and seamless user experiences.',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 50),
+                    Container(
+                      width: 100,
+                      height: 300,
+                      child: Column(
+                        children: <Widget>[
+                          Image.asset(about_me_web),
+                          SizedBox(height: 10),
+                          Text(
+                            'About me website build with HTML',
+                            style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 50),
+                    Container(
+                      width: 100,
+                      height: 150,
+                      child: Column(
+                        children: <Widget>[
+                          Image.asset(employee_management),
+                          SizedBox(height: 10),
+                          Text(
+                            'Employee Management build with C & C++',
+                            style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: 100,
+                      height: 310,
+                      child: Column(
+                        children: <Widget>[
+                          Image.asset(smart_watering),
+                          SizedBox(height: 10),
+                          Text(
+                            'Smart Watering system build with Arduino',
+                            style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 50),
+                    Container(
+                      width: 100,
+                      height: 300,
+                      child: Column(
+                        children: <Widget>[
+                          Image.asset(puzzle_memory),
+                          SizedBox(height: 10),
+                          Text(
+                            'Memory puzzle game build with Jave & SceneBuilder',
+                            style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 50),
+                    Container(
+                      width: 100,
+                      height: 300,
+                      child: Column(
+                        children: <Widget>[
+                          Image.asset(smart_home),
+                          SizedBox(height: 10),
+                          Text(
+                            'Smart Home build with ESP32 & Arduino',
+                            style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MobileReferees extends StatelessWidget {
+  const MobileReferees({super.key});
+
+  final String GTR = "assets/gtr_logo.png";
+  final String ITC = "assets/itc_logo.png";
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Container(
+        height: 400,
+        decoration: BoxDecoration(color: Color(0xFF0E0F1A)),
+        child: Column(
+          children: <Widget>[
+            Text(
+              'Referees',
+              style: TextStyle(fontFamily: 'MomoTrustDisplay', fontSize: 25),
+            ),
+            SizedBox(height: 10),
+            Center(
+              child: SizedBox(
+                width: 75,
+                child: Divider(thickness: 10, color: Colors.blue),
+              ),
+            ),
+            SizedBox(height: 10),
+            Center(
+              child: Row(
+                children: <Widget>[
+                  SizedBox(width: 15),
+                  Flexible(
+                    child: Text(
+                      'Lecturers are available upon request to verify my academic performance and professional conduct.',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+            Row(
+              spacing: 10,
+              children: <Widget>[
+                SizedBox(width: 20),
+                Expanded(
+                  child: Container(
+                    width: 250,
+                    decoration: BoxDecoration(color: Colors.black),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(height: 10),
+                        Row(
+                          children: <Widget>[
+                            Icon(Icons.person, size: 25),
+                            Spacer(),
+                            Image.asset(GTR, width: 25, height: 25),
+                            SizedBox(width: 5),
+                            Image.asset(ITC, width: 25, height: 25),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: <Widget>[
+                            Flexible(
+                              child: Text(
+                                'Dr. SRENG Sokchenda',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Flexible(
+                              child: Text(
+                                'Head of Telecommunication and Network Engineering Department',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: <Widget>[
+                            Flexible(
+                              child: Icon(Icons.account_balance, size: 25),
+                            ),
+                            SizedBox(width: 5),
+                            Flexible(
+                              child: Text(
+                                'Institute of Technology of Cambodia',
+                                style: TextStyle(fontSize: 10),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: <Widget>[
+                            Flexible(child: Icon(Icons.phone, size: 25)),
+                            SizedBox(width: 5),
+                            Flexible(
+                              child: Text(
+                                '+85512407910',
+                                style: TextStyle(fontSize: 10),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: <Widget>[
+                            Flexible(child: Icon(Icons.email)),
+                            SizedBox(width: 5),
+                            Flexible(
+                              child: Text(
+                                'sokchenda@itc.edu.kh',
+                                style: TextStyle(fontSize: 10),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    width: 250,
+                    decoration: BoxDecoration(color: Colors.black),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(height: 10),
+                        Row(
+                          children: <Widget>[
+                            Icon(Icons.person, size: 25),
+                            Spacer(),
+                            Image.asset(GTR, width: 25, height: 25),
+                            SizedBox(width: 5),
+                            Image.asset(ITC, width: 25, height: 25),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: <Widget>[
+                            Flexible(
+                              child: Text(
+                                'Dr. THOURN Kosorl',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Flexible(
+                              child: Text(
+                                'Deputy Head of Telecommunication and Network Engineering Department',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        Row(
+                          children: <Widget>[
+                            Flexible(child: Icon(Icons.account_balance)),
+                            SizedBox(width: 5),
+                            Flexible(
+                              child: Text(
+                                'Institute of Technology of Cambodia',
+                                style: TextStyle(fontSize: 10),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: <Widget>[
+                            Flexible(child: Icon(Icons.email)),
+                            SizedBox(width: 5),
+                            Flexible(
+                              child: Text(
+                                'kosorl@itc.edu.kh',
+                                style: TextStyle(fontSize: 10),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 25),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    width: 250,
+                    decoration: BoxDecoration(color: Colors.black),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(height: 10),
+                        Row(
+                          children: <Widget>[
+                            Icon(Icons.person, size: 25),
+                            Spacer(),
+                            Image.asset(GTR, width: 25, height: 25),
+                            SizedBox(width: 5),
+                            Image.asset(ITC, width: 25, height: 25),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: <Widget>[
+                            Flexible(
+                              child: Text(
+                                'Dr. MUY Sengly',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Flexible(
+                              child: Text(
+                                'Lecture of Telecommunication and Network Engineering Department',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        Row(
+                          children: <Widget>[
+                            Flexible(child: Icon(Icons.account_balance)),
+                            SizedBox(width: 5),
+                            Flexible(
+                              child: Text(
+                                'Institute of Technology of Cambodia',
+                                style: TextStyle(fontSize: 10),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: <Widget>[
+                            Flexible(child: Icon(Icons.email)),
+                            SizedBox(width: 5),
+                            Flexible(
+                              child: Text(
+                                'muysengly@gmail.com',
+                                style: TextStyle(fontSize: 10),
+                              ),
+                            ),
                           ],
                         ),
                         SizedBox(height: 25),
