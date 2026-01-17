@@ -188,8 +188,10 @@ class HomeSite extends StatelessWidget {
     }
   }
 
-  void _openCV() {
-    _launchUrl('/cv/my_cv.pdf');
+  void viewCv() {
+    final url = '${html.window.location.origin}/cv/my_cv.pdf';
+    final viewerUrl = 'https://docs.google.com/viewer?url=$url';
+    html.window.open(viewerUrl, '_blank');
   }
 
   @override
@@ -335,7 +337,7 @@ class HomeSite extends StatelessWidget {
                                 backgroundColor: Colors.purple[600],
                               ),
                               onPressed: () {
-                                _openCV();
+                                viewCv();
                               },
                               child: Text('View CV'),
                             ),
