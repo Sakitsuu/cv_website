@@ -2174,7 +2174,7 @@ class MobilePortfolio extends StatelessWidget {
                     ),
                     Container(
                       width: 100,
-                      height: 310,
+                      height: 250,
                       child: Column(
                         children: <Widget>[
                           Image.asset(smart_watering),
