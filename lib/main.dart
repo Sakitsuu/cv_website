@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:universal_html/html.dart' as html;
 
@@ -40,108 +41,131 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  bool isMobile(BuildContext context) {
-    return MediaQuery.of(context).size.width < 600;
+PreferredSizeWidget appBarHelper({
+  required BuildContext context,
+  required String logoPath,
+  required GlobalKey homeKey,
+  required GlobalKey aboutKey,
+  required GlobalKey personalKey,
+  required GlobalKey projectsKey,
+  required GlobalKey portfolioKey,
+  required GlobalKey contactKey,
+}) {
+  final double width = MediaQuery.of(context).size.width;
+  final bool isSmall = width < 750;
+
+  Widget navButton(String text, VoidCallback onTap) {
+    return TextButton(
+      style: TextButton.styleFrom(
+        padding: EdgeInsets.symmetric(horizontal: isSmall ? 6 : 12),
+        minimumSize: Size.zero,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
+      onPressed: onTap,
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: isSmall ? 11 : 14,
+          color: Colors.lightBlue,
+          fontFamily: 'MomoTrustDisplay',
+        ),
+      ),
+    );
   }
 
-  final String logo_TC = 'assets/TC_logo.png';
+  return AppBar(
+    backgroundColor: Colors.black,
+    toolbarHeight: isSmall ? 60 : 80,
+    titleSpacing: 16,
+    title: Row(children: [Image.asset(logoPath, height: isSmall ? 40 : 55)]),
+    actions: [
+      Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          navButton("Home", () => scrollToSection(homeKey)),
+          navButton("About", () => scrollToSection(aboutKey)),
+          navButton("Personal-Info", () => scrollToSection(personalKey)),
+          navButton("Projects", () => scrollToSection(projectsKey)),
+          navButton("Portfolio", () => scrollToSection(portfolioKey)),
+          navButton("Referees", () => scrollToSection(contactKey)),
+          const SizedBox(width: 8),
+        ],
+      ),
+    ],
+  );
+}
 
+class _MyHomePageState extends State<MyHomePage> {
   final ScrollController _scrollController = ScrollController();
 
   final GlobalKey homeKey = GlobalKey();
   final GlobalKey aboutKey = GlobalKey();
+  final GlobalKey personalKey = GlobalKey();
   final GlobalKey projectsKey = GlobalKey();
   final GlobalKey portfolioKey = GlobalKey();
-  final GlobalKey personalKey = GlobalKey();
   final GlobalKey contactKey = GlobalKey();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Wrap(
-          children: <Widget>[
-            SizedBox(width: 75, height: 75, child: Image.asset(logo_TC)),
+      appBar: appBarHelper(
+        context: context,
+        logoPath: 'assets/TC_logo.png', // <-- your logo
+        homeKey: homeKey,
+        aboutKey: aboutKey,
+        personalKey: personalKey,
+        projectsKey: projectsKey,
+        portfolioKey: portfolioKey,
+        contactKey: contactKey,
+      ),
+      body: SingleChildScrollView(
+        controller: _scrollController,
+        child: Column(
+          children: [
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final mobile = constraints.maxWidth < 600;
+                return mobile
+                    ? MobileLayout(
+                        controller: _scrollController,
+                        homeKey: homeKey,
+                        aboutKey: aboutKey,
+                        personalKey: personalKey,
+                        projectsKey: projectsKey,
+                        portfolioKey: portfolioKey,
+                        contactKey: contactKey,
+                      )
+                    : DesktopLayout(
+                        controller: _scrollController,
+                        homeKey: homeKey,
+                        aboutKey: aboutKey,
+                        personalKey: personalKey,
+                        projectsKey: projectsKey,
+                        portfolioKey: portfolioKey,
+                        contactKey: contactKey,
+                      );
+              },
+            ),
           ],
         ),
-        actions: [
-          Flexible(
-            child: Wrap(
-              children: <Widget>[
-                TextButton(
-                  onPressed: () => scrollToSection(homeKey),
-                  child: const Text(
-                    "Home",
-                    style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => scrollToSection(aboutKey),
-                  child: const Text(
-                    "About",
-                    style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => scrollToSection(personalKey),
-                  child: const Text(
-                    "Personal-Info",
-                    style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => scrollToSection(projectsKey),
-                  child: const Text(
-                    "Projects",
-                    style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => scrollToSection(portfolioKey),
-                  child: const Text(
-                    "Portfolio",
-                    style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => scrollToSection(contactKey),
-                  child: const Text(
-                    "Referees",
-                    style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
+    );
+  }
 
-      // ✅ BODY must be inside Scaffold, after appBar, with a comma above and below
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final isMobile = constraints.maxWidth < 600;
-
-          return isMobile
-              ? MobileLayout(
-                  homeKey: homeKey,
-                  aboutKey: aboutKey,
-                  personalKey: personalKey,
-                  projectsKey: projectsKey,
-                  portfolioKey: portfolioKey,
-                  contactKey: contactKey,
-                )
-              : DesktopLayout(
-                  homeKey: homeKey,
-                  aboutKey: aboutKey,
-                  personalKey: personalKey,
-                  projectsKey: projectsKey,
-                  portfolioKey: portfolioKey,
-                  contactKey: contactKey,
-                );
-        },
-      ),
+  Widget section(String text, Color color, GlobalKey key) {
+    return Container(
+      key: key,
+      height: 600,
+      width: double.infinity,
+      color: color.withOpacity(0.15),
+      alignment: Alignment.center,
+      child: Text(text, style: const TextStyle(fontSize: 40)),
     );
   }
 }
@@ -158,6 +182,7 @@ void scrollToSection(GlobalKey key) {
 }
 
 class DesktopLayout extends StatelessWidget {
+  final ScrollController controller;
   final GlobalKey homeKey;
   final GlobalKey aboutKey;
   final GlobalKey personalKey;
@@ -167,6 +192,7 @@ class DesktopLayout extends StatelessWidget {
 
   const DesktopLayout({
     super.key,
+    required this.controller,
     required this.homeKey,
     required this.aboutKey,
     required this.personalKey,
@@ -178,7 +204,7 @@ class DesktopLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      controller: ScrollController(),
+      controller: controller,
       child: Column(
         children: <Widget>[
           Container(
@@ -1289,6 +1315,7 @@ class RefereeSite extends StatelessWidget {
 }
 
 class MobileLayout extends StatelessWidget {
+  final ScrollController controller;
   final GlobalKey homeKey;
   final GlobalKey aboutKey;
   final GlobalKey personalKey;
@@ -1298,6 +1325,7 @@ class MobileLayout extends StatelessWidget {
 
   const MobileLayout({
     super.key,
+    required this.controller,
     required this.homeKey,
     required this.aboutKey,
     required this.personalKey,
@@ -1550,197 +1578,199 @@ class MobileAbout extends StatelessWidget {
         height: 1100,
         width: 600,
         decoration: BoxDecoration(color: Color(0xFF0E0F1A)),
-        child: Column(
-          children: <Widget>[
-            SizedBox(height: 10),
-            Text(
-              'About me',
-              style: TextStyle(fontFamily: 'MomoTrustDisplay', fontSize: 25),
-            ),
-            SizedBox(
-              width: 75,
-              child: Divider(thickness: 10, color: Colors.blue),
-            ),
-            SizedBox(height: 25),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    SizedBox(width: 20),
-                    Flexible(
-                      child: Text(
-                        'My name is Try Chansak, and I am a student at the Institute of Technology of Cambodia, majoring in Telecommunication and Network Engineering. I am highly passionate about technology and have hands-on experience in development through my work in DC Lab and Fab Lab. I am committed to continuously improving my skills and knowledge and will dedicate my best efforts to ensuring the success of every project I undertake.',
+        child: Center(
+          child: Column(
+            children: <Widget>[
+              SizedBox(height: 10),
+              Text(
+                'About me',
+                style: TextStyle(fontFamily: 'MomoTrustDisplay', fontSize: 25),
+              ),
+              SizedBox(
+                width: 75,
+                child: Divider(thickness: 10, color: Colors.blue),
+              ),
+              SizedBox(height: 25),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      SizedBox(width: 20),
+                      Flexible(
+                        child: Text(
+                          'My name is Try Chansak, and I am a student at the Institute of Technology of Cambodia, majoring in Telecommunication and Network Engineering. I am highly passionate about technology and have hands-on experience in development through my work in DC Lab and Fab Lab. I am committed to continuously improving my skills and knowledge and will dedicate my best efforts to ensuring the success of every project I undertake.',
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: <Widget>[
+                      SizedBox(width: 20),
+                      Text(
+                        'chansaktry168@gmail.com',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 25),
+              Row(
+                children: <Widget>[
+                  SizedBox(width: 20),
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(16),
+                      margin: EdgeInsets.all(8),
+                      height: 375,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.black,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.teal,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(Icons.code),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            'Software Development',
+                            style: TextStyle(
+                              fontFamily: 'MomoTrustDisplay',
+                              fontSize: 12,
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          Text(
+                            'Turn ideas into functional applications by designing, developing, and maintaining efficient software systems that solve real-world problems.',
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(width: 20),
-                  ],
-                ),
-                SizedBox(height: 10),
-                Row(
-                  children: <Widget>[
-                    SizedBox(width: 20),
-                    Text(
-                      'chansaktry168@gmail.com',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 25),
-            Row(
-              children: <Widget>[
-                SizedBox(width: 20),
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(16),
-                    margin: EdgeInsets.all(8),
-                    height: 375,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.black,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: Colors.teal,
-                            borderRadius: BorderRadius.circular(12),
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(16),
+                      margin: EdgeInsets.all(8),
+                      height: 375,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.black,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.purple,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(Icons.router),
                           ),
-                          child: Icon(Icons.code),
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          'Software Development',
-                          style: TextStyle(
-                            fontFamily: 'MomoTrustDisplay',
-                            fontSize: 12,
+                          SizedBox(height: 10),
+                          Text(
+                            'Network Engineering',
+                            style: TextStyle(
+                              fontFamily: 'MomoTrustDisplay',
+                              fontSize: 12,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 20),
-                        Text(
-                          'Turn ideas into functional applications by designing, developing, and maintaining efficient software systems that solve real-world problems.',
-                        ),
-                      ],
+                          SizedBox(height: 20),
+                          Text(
+                            'Plan and implement secure, high-performance communication networks to ensure reliable data transmission and system connectivity.',
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(16),
-                    margin: EdgeInsets.all(8),
-                    height: 375,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.black,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: Colors.purple,
-                            borderRadius: BorderRadius.circular(12),
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(16),
+                      margin: EdgeInsets.all(8),
+                      height: 375,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.black,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(Icons.cell_tower),
                           ),
-                          child: Icon(Icons.router),
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          'Network Engineering',
-                          style: TextStyle(
-                            fontFamily: 'MomoTrustDisplay',
-                            fontSize: 12,
+                          SizedBox(height: 10),
+                          Text(
+                            'Telecommunication Systems',
+                            style: TextStyle(
+                              fontFamily: 'MomoTrustDisplay',
+                              fontSize: 12,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 20),
-                        Text(
-                          'Plan and implement secure, high-performance communication networks to ensure reliable data transmission and system connectivity.',
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(16),
-                    margin: EdgeInsets.all(8),
-                    height: 375,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.black,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(12),
+                          SizedBox(height: 20),
+                          Text(
+                            'Work with telecommunication systems to support wireless, wired, and digital communication solutions for real-time connectivity.',
                           ),
-                          child: Icon(Icons.cell_tower),
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          'Telecommunication Systems',
-                          style: TextStyle(
-                            fontFamily: 'MomoTrustDisplay',
-                            fontSize: 12,
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Text(
-                          'Work with telecommunication systems to support wireless, wired, and digital communication solutions for real-time connectivity.',
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(width: 20),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(height: 50),
-                Text(
-                  '2+',
-                  style: TextStyle(
-                    fontSize: 100,
-                    fontFamily: 'MomoTrustDisplay',
+                  SizedBox(width: 20),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(height: 50),
+                  Text(
+                    '2+',
+                    style: TextStyle(
+                      fontSize: 100,
+                      fontFamily: 'MomoTrustDisplay',
+                    ),
                   ),
-                ),
-                Text(
-                  'Lab',
-                  style: TextStyle(
-                    fontSize: 50,
-                    fontFamily: 'MomoTrustDisplay',
+                  Text(
+                    'Lab',
+                    style: TextStyle(
+                      fontSize: 50,
+                      fontFamily: 'MomoTrustDisplay',
+                    ),
                   ),
-                ),
-                Text(
-                  'Projects',
-                  style: TextStyle(
-                    fontSize: 50,
-                    fontFamily: 'MomoTrustDisplay',
+                  Text(
+                    'Projects',
+                    style: TextStyle(
+                      fontSize: 50,
+                      fontFamily: 'MomoTrustDisplay',
+                    ),
                   ),
-                ),
-                Text(
-                  'Experience',
-                  style: TextStyle(
-                    fontSize: 50,
-                    fontFamily: 'MomoTrustDisplay',
+                  Text(
+                    'Experience',
+                    style: TextStyle(
+                      fontSize: 50,
+                      fontFamily: 'MomoTrustDisplay',
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
