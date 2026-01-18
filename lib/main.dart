@@ -2106,135 +2106,130 @@ class MobilePortfolio extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          Text(
-            'Portfolio',
-            style: TextStyle(fontFamily: 'MomoTrustDisplay', fontSize: 25),
-          ),
-          SizedBox(height: 10),
-          Container(
-            width: 75,
-            child: Divider(thickness: 10, color: Colors.blue),
-          ),
-          SizedBox(height: 20),
-          Row(
-            children: <Widget>[
-              SizedBox(width: 15),
-              Flexible(
-                child: Text(
-                  'I create innovative and user-friendly software and network solutions that combine functionality, creativity, and seamless user experiences.',
-                  style: TextStyle(color: Colors.grey),
-                ),
+    return Column(
+      children: <Widget>[
+        Text(
+          'Portfolio',
+          style: TextStyle(fontFamily: 'MomoTrustDisplay', fontSize: 25),
+        ),
+        SizedBox(height: 10),
+        Container(width: 75, child: Divider(thickness: 10, color: Colors.blue)),
+        SizedBox(height: 20),
+        Row(
+          children: <Widget>[
+            SizedBox(width: 15),
+            Flexible(
+              child: Text(
+                'I create innovative and user-friendly software and network solutions that combine functionality, creativity, and seamless user experiences.',
+                style: TextStyle(color: Colors.grey),
               ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(height: 50),
-                    Container(
-                      width: 100,
-                      height: 300,
-                      child: Column(
-                        children: <Widget>[
-                          Image.asset(about_me_web),
-                          SizedBox(height: 10),
-                          Text(
-                            'About me website build with HTML',
-                            style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-                          ),
-                        ],
-                      ),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              child: Column(
+                children: <Widget>[
+                  SizedBox(height: 50),
+                  Container(
+                    width: 100,
+                    height: 300,
+                    child: Column(
+                      children: <Widget>[
+                        Image.asset(about_me_web),
+                        SizedBox(height: 10),
+                        Text(
+                          'About me website build with HTML',
+                          style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(height: 50),
-                    Container(
-                      width: 100,
-                      height: 150,
-                      child: Column(
-                        children: <Widget>[
-                          Image.asset(employee_management),
-                          SizedBox(height: 10),
-                          Text(
-                            'Employee Management build with C & C++',
-                            style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-                          ),
-                        ],
-                      ),
+            ),
+            Expanded(
+              child: Column(
+                children: <Widget>[
+                  SizedBox(height: 50),
+                  Container(
+                    width: 100,
+                    height: 150,
+                    child: Column(
+                      children: <Widget>[
+                        Image.asset(employee_management),
+                        SizedBox(height: 10),
+                        Text(
+                          'Employee Management build with C & C++',
+                          style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                        ),
+                      ],
                     ),
-                    Container(
-                      width: 100,
-                      height: 250,
-                      child: Column(
-                        children: <Widget>[
-                          Image.asset(smart_watering),
-                          SizedBox(height: 10),
-                          Text(
-                            'Smart Watering system build with Arduino',
-                            style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-                          ),
-                        ],
-                      ),
+                  ),
+                  Container(
+                    width: 100,
+                    height: 250,
+                    child: Column(
+                      children: <Widget>[
+                        Image.asset(smart_watering),
+                        SizedBox(height: 10),
+                        Text(
+                          'Smart Watering system build with Arduino',
+                          style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(height: 50),
-                    Container(
-                      width: 100,
-                      height: 300,
-                      child: Column(
-                        children: <Widget>[
-                          Image.asset(puzzle_memory),
-                          SizedBox(height: 10),
-                          Text(
-                            'Memory puzzle game build with Jave & SceneBuilder',
-                            style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-                          ),
-                        ],
-                      ),
+            ),
+            Expanded(
+              child: Column(
+                children: <Widget>[
+                  SizedBox(height: 50),
+                  Container(
+                    width: 100,
+                    height: 300,
+                    child: Column(
+                      children: <Widget>[
+                        Image.asset(puzzle_memory),
+                        SizedBox(height: 10),
+                        Text(
+                          'Memory puzzle game build with Jave & SceneBuilder',
+                          style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(height: 50),
-                    Container(
-                      width: 100,
-                      height: 300,
-                      child: Column(
-                        children: <Widget>[
-                          Image.asset(smart_home),
-                          SizedBox(height: 10),
-                          Text(
-                            'Smart Home build with ESP32 & Arduino',
-                            style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-                          ),
-                        ],
-                      ),
+            ),
+            Expanded(
+              child: Column(
+                children: <Widget>[
+                  SizedBox(height: 50),
+                  Container(
+                    width: 100,
+                    height: 300,
+                    child: Column(
+                      children: <Widget>[
+                        Image.asset(smart_home),
+                        SizedBox(height: 10),
+                        Text(
+                          'Smart Home build with ESP32 & Arduino',
+                          style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
