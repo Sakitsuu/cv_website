@@ -51,23 +51,25 @@ PreferredSizeWidget appBarHelper({
   required GlobalKey portfolioKey,
   required GlobalKey contactKey,
 }) {
-  final double width = MediaQuery.of(context).size.width;
-  final bool isSmall = width < 750;
+  final w = MediaQuery.of(context).size.width;
 
-  Widget navButton(String text, VoidCallback onTap) {
+  void go(String value) {
+    if (value == "Home") scrollToSection(homeKey);
+    if (value == "About") scrollToSection(aboutKey);
+    if (value == "Personal-Info") scrollToSection(personalKey);
+    if (value == "Projects") scrollToSection(projectsKey);
+    if (value == "Portfolio") scrollToSection(portfolioKey);
+    if (value == "Referees") scrollToSection(contactKey);
+  }
+
+  Widget navButton(String text) {
     return TextButton(
-      style: TextButton.styleFrom(
-        padding: EdgeInsets.symmetric(horizontal: isSmall ? 6 : 12),
-        minimumSize: Size.zero,
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      ),
-      onPressed: onTap,
+      onPressed: () => go(text),
       child: Text(
         text,
-        style: TextStyle(
-          fontSize: isSmall ? 11 : 14,
-          color: Colors.lightBlue,
+        style: const TextStyle(
           fontFamily: 'MomoTrustDisplay',
+          color: Colors.lightBlue,
         ),
       ),
     );
@@ -75,22 +77,87 @@ PreferredSizeWidget appBarHelper({
 
   return AppBar(
     backgroundColor: Colors.black,
-    toolbarHeight: isSmall ? 60 : 80,
+    toolbarHeight: w < 700 ? 60 : 80,
     titleSpacing: 16,
-    title: Row(children: [Image.asset(logoPath, height: isSmall ? 40 : 55)]),
+    title: Image.asset(logoPath, height: w < 700 ? 40 : 55),
     actions: [
-      Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          navButton("Home", () => scrollToSection(homeKey)),
-          navButton("About", () => scrollToSection(aboutKey)),
-          navButton("Personal-Info", () => scrollToSection(personalKey)),
-          navButton("Projects", () => scrollToSection(projectsKey)),
-          navButton("Portfolio", () => scrollToSection(portfolioKey)),
-          navButton("Referees", () => scrollToSection(contactKey)),
-          const SizedBox(width: 8),
-        ],
-      ),
+      if (w >= 700) ...[
+        navButton("Home"),
+        navButton("About"),
+        navButton("Personal-Info"),
+        navButton("Projects"),
+        navButton("Portfolio"),
+        navButton("Referees"),
+        const SizedBox(width: 8),
+      ] else ...[
+        PopupMenuButton<String>(
+          icon: const Icon(Icons.menu),
+          onSelected: go,
+          itemBuilder: (context) => const [
+            PopupMenuItem(
+              value: "Home",
+              child: Text(
+                "Home",
+                style: const TextStyle(
+                  fontFamily: 'MomoTrustDisplay',
+                  color: Colors.lightBlue,
+                ),
+              ),
+            ),
+            PopupMenuItem(
+              value: "About",
+              child: Text(
+                "About",
+                style: const TextStyle(
+                  fontFamily: 'MomoTrustDisplay',
+                  color: Colors.lightBlue,
+                ),
+              ),
+            ),
+            PopupMenuItem(
+              value: "Personal-Info",
+              child: Text(
+                "Personal-Info",
+                style: const TextStyle(
+                  fontFamily: 'MomoTrustDisplay',
+                  color: Colors.lightBlue,
+                ),
+              ),
+            ),
+            PopupMenuItem(
+              value: "Projects",
+              child: Text(
+                "Projects",
+                style: const TextStyle(
+                  fontFamily: 'MomoTrustDisplay',
+                  color: Colors.lightBlue,
+                ),
+              ),
+            ),
+            PopupMenuItem(
+              value: "Portfolio",
+              child: Text(
+                "Portfolio",
+                style: const TextStyle(
+                  fontFamily: 'MomoTrustDisplay',
+                  color: Colors.lightBlue,
+                ),
+              ),
+            ),
+            PopupMenuItem(
+              value: "Referees",
+              child: Text(
+                "Referees",
+                style: const TextStyle(
+                  fontFamily: 'MomoTrustDisplay',
+                  color: Colors.lightBlue,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(width: 8),
+      ],
     ],
   );
 }
@@ -1365,7 +1432,7 @@ class MobileLayout extends StatelessWidget {
           ),
           Container(
             key: portfolioKey,
-            height: 650,
+            height: 700,
             alignment: Alignment.center,
             child: const MobilePortfolio(),
           ),
