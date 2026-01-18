@@ -1432,7 +1432,7 @@ class MobileLayout extends StatelessWidget {
           ),
           Container(
             key: portfolioKey,
-            height: 650,
+            height: 700,
             alignment: Alignment.center,
             child: const MobilePortfolio(),
           ),
