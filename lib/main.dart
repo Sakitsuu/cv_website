@@ -2,6 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:flutter/foundation.dart' show kIsWeb;
+
+class AppColors {
+  static const Color bg = Colors.white;
+  static const Color sectionBg = Color(0xFFF5F7FA);
+  static const Color surface = Colors.white;
+  static const Color primary = Color(0xFF2563EB);
+  static const Color text = Color(0xFF111827);
+  static const Color muted = Color(0xFF6B7280);
+  static const Color divider = Color(0xFFE5E7EB);
+}
 
 void main() {
   runApp(const MyApp());
@@ -14,20 +25,23 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.dark, // Force dark mode
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: Colors.black, // Full dark background
+      themeMode: ThemeMode.light,
+      theme: ThemeData(
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: AppColors.bg,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.lightBlue,
-          brightness: Brightness.dark,
+          seedColor: AppColors.primary,
+          brightness: Brightness.light,
+        ),
+        fontFamily: 'MomoTrustDisplay',
+        appBarTheme: const AppBarTheme(
+          backgroundColor: AppColors.bg,
+          foregroundColor: AppColors.text,
+          elevation: 0,
         ),
       ),
+      darkTheme: ThemeData.dark(),
       title: 'CV website',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
-        fontFamily: 'MomoTrustDisplay',
-      ),
       home: const MyHomePage(title: 'CV Design'),
     );
   }
@@ -69,16 +83,18 @@ PreferredSizeWidget appBarHelper({
         text,
         style: const TextStyle(
           fontFamily: 'MomoTrustDisplay',
-          color: Colors.lightBlue,
+          color: AppColors.primary,
         ),
       ),
     );
   }
 
   return AppBar(
-    backgroundColor: Colors.black,
+    backgroundColor: AppColors.bg,
+    elevation: 0,
     toolbarHeight: w < 700 ? 60 : 80,
     titleSpacing: 16,
+    iconTheme: const IconThemeData(color: AppColors.text),
     title: Image.asset(logoPath, height: w < 700 ? 40 : 55),
     actions: [
       if (w >= 700) ...[
@@ -91,16 +107,16 @@ PreferredSizeWidget appBarHelper({
         const SizedBox(width: 8),
       ] else ...[
         PopupMenuButton<String>(
-          icon: const Icon(Icons.menu),
+          icon: const Icon(Icons.menu, color: AppColors.text),
           onSelected: go,
           itemBuilder: (context) => const [
             PopupMenuItem(
               value: "Home",
               child: Text(
                 "Home",
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'MomoTrustDisplay',
-                  color: Colors.lightBlue,
+                  color: AppColors.primary,
                 ),
               ),
             ),
@@ -108,9 +124,9 @@ PreferredSizeWidget appBarHelper({
               value: "About",
               child: Text(
                 "About",
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'MomoTrustDisplay',
-                  color: Colors.lightBlue,
+                  color: AppColors.primary,
                 ),
               ),
             ),
@@ -118,9 +134,9 @@ PreferredSizeWidget appBarHelper({
               value: "Personal-Info",
               child: Text(
                 "Personal-Info",
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'MomoTrustDisplay',
-                  color: Colors.lightBlue,
+                  color: AppColors.primary,
                 ),
               ),
             ),
@@ -128,9 +144,9 @@ PreferredSizeWidget appBarHelper({
               value: "Projects",
               child: Text(
                 "Projects",
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'MomoTrustDisplay',
-                  color: Colors.lightBlue,
+                  color: AppColors.primary,
                 ),
               ),
             ),
@@ -138,9 +154,9 @@ PreferredSizeWidget appBarHelper({
               value: "Portfolio",
               child: Text(
                 "Portfolio",
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'MomoTrustDisplay',
-                  color: Colors.lightBlue,
+                  color: AppColors.primary,
                 ),
               ),
             ),
@@ -148,9 +164,9 @@ PreferredSizeWidget appBarHelper({
               value: "Referees",
               child: Text(
                 "Referees",
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'MomoTrustDisplay',
-                  color: Colors.lightBlue,
+                  color: AppColors.primary,
                 ),
               ),
             ),
@@ -183,7 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: appBarHelper(
         context: context,
-        logoPath: 'assets/TC_logo.png', // <-- your logo
+        logoPath: 'assets/TC_logo.png',
         homeKey: homeKey,
         aboutKey: aboutKey,
         personalKey: personalKey,
@@ -282,7 +298,6 @@ class DesktopLayout extends StatelessWidget {
           Container(
             key: aboutKey,
             alignment: Alignment.center,
-            height: 600,
             child: const AboutSite(),
           ),
           Container(
@@ -299,13 +314,11 @@ class DesktopLayout extends StatelessWidget {
           ),
           Container(
             key: portfolioKey,
-            height: 1146,
             alignment: Alignment.center,
             child: const PortfolioSite(),
           ),
           Container(
             key: contactKey,
-            height: 500,
             alignment: Alignment.center,
             child: const RefereeSite(),
           ),
@@ -325,10 +338,42 @@ class HomeSite extends StatelessWidget {
   final String LinkedIn = "assets/Linkedin_Logo.png";
   final String Telegram = "assets/Telegram_Logo.png";
 
+  Uri get gmailWeb => Uri.parse(
+    'https://mail.google.com/mail/?view=cm&fs=1&to=chansaktry168@gmail.com',
+  );
+
   Future<void> _launchUrl(String url) async {
     final Uri uri = Uri.parse(url);
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       throw 'Could not launch $url';
+    }
+  }
+
+  void _contactMe() async {
+    if (kIsWeb) {
+      final uri = Uri.parse(
+        'https://mail.google.com/mail/?view=cm&fs=1'
+        '&to=chansaktry168@gmail.com'
+        '&su=Contact%20from%20CV%20Website'
+        '&body=Hello%20Try,%0A%0AI%20saw%20your%20CV%20website%20and%20want%20to%20connect.',
+      );
+
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        throw 'Could not open Gmail web';
+      }
+    } else {
+      final uri = Uri(
+        scheme: 'mailto',
+        path: 'chansaktry168@gmail.com',
+        queryParameters: {
+          'subject': 'Contact from CV Website',
+          'body': 'Hello Try,\n\nI saw your CV website and want to connect.',
+        },
+      );
+
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        throw 'Could not open email app';
+      }
     }
   }
 
@@ -369,7 +414,7 @@ class HomeSite extends StatelessWidget {
                             Text(
                               'Try Chansak',
                               style: TextStyle(
-                                color: Colors.blue,
+                                color: AppColors.primary,
                                 fontFamily: 'MomoTrustDisplay',
                                 fontSize: 25,
                               ),
@@ -385,6 +430,7 @@ class HomeSite extends StatelessWidget {
                                 style: TextStyle(
                                   fontFamily: 'MomoTrustDisplay',
                                   fontSize: 25,
+                                  color: AppColors.text,
                                 ),
                               ),
                             ),
@@ -400,7 +446,7 @@ class HomeSite extends StatelessWidget {
                                 style: TextStyle(
                                   fontFamily: 'Roboto',
                                   fontSize: 15,
-                                  color: Colors.grey,
+                                  color: AppColors.muted,
                                 ),
                               ),
                             ),
@@ -416,7 +462,7 @@ class HomeSite extends StatelessWidget {
                                 style: TextStyle(
                                   fontFamily: 'Roboto',
                                   fontSize: 15,
-                                  color: Colors.grey,
+                                  color: AppColors.muted,
                                 ),
                               ),
                             ),
@@ -476,19 +522,22 @@ class HomeSite extends StatelessWidget {
                             SizedBox(width: 50),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.purple[600],
+                                backgroundColor: Colors.blue,
                               ),
                               onPressed: () {
-                                _openCV();
+                                _contactMe();
                               },
-                              child: Text('View CV'),
+                              child: Text('Contact me'),
                             ),
                             SizedBox(width: 30),
                             OutlinedButton(
                               onPressed: () {
                                 _launchUrl('cv/my_cv.pdf');
                               },
-                              child: Text('Download CV'),
+                              child: Text(
+                                'Download CV',
+                                style: TextStyle(color: AppColors.text),
+                              ),
                             ),
                           ],
                         ),
@@ -497,24 +546,27 @@ class HomeSite extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(width: 20),
-                          Container(
-                            padding: EdgeInsets.all(16),
-                            margin: EdgeInsets.all(8),
-                            width: 750,
-                            height: 750,
-                            decoration: BoxDecoration(shape: BoxShape.circle),
+                  child: Center(
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final screenW = MediaQuery.of(context).size.width;
+
+                        final double size = screenW >= 1200
+                            ? 520
+                            : screenW >= 900
+                            ? 420
+                            : 320;
+
+                        return SizedBox(
+                          width: size,
+                          height: size,
+                          child: FittedBox(
+                            fit: BoxFit.contain,
                             child: Image.asset(photo),
                           ),
-                        ],
-                      ),
-                    ],
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],
@@ -533,8 +585,8 @@ class AboutSite extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
-        height: 550,
-        decoration: BoxDecoration(color: Color(0xFF0E0F1A)),
+        padding: const EdgeInsets.symmetric(vertical: 80),
+        decoration: BoxDecoration(color: AppColors.sectionBg),
         child: Row(
           children: <Widget>[
             Expanded(
@@ -549,6 +601,7 @@ class AboutSite extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 100,
                         fontFamily: 'MomoTrustDisplay',
+                        color: AppColors.text,
                       ),
                     ),
                     Text(
@@ -556,6 +609,7 @@ class AboutSite extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 50,
                         fontFamily: 'MomoTrustDisplay',
+                        color: AppColors.text,
                       ),
                     ),
                     Text(
@@ -563,6 +617,7 @@ class AboutSite extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 50,
                         fontFamily: 'MomoTrustDisplay',
+                        color: AppColors.text,
                       ),
                     ),
                     Text(
@@ -570,6 +625,7 @@ class AboutSite extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 50,
                         fontFamily: 'MomoTrustDisplay',
+                        color: AppColors.text,
                       ),
                     ),
                   ],
@@ -590,6 +646,7 @@ class AboutSite extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'MomoTrustDisplay',
                           fontSize: 50,
+                          color: AppColors.text,
                         ),
                       ),
                     ),
@@ -597,7 +654,7 @@ class AboutSite extends StatelessWidget {
                     Center(
                       child: SizedBox(
                         width: 100,
-                        child: Divider(thickness: 5, color: Colors.blue),
+                        child: Divider(thickness: 5, color: AppColors.primary),
                       ),
                     ),
                     SizedBox(height: 40),
@@ -606,6 +663,7 @@ class AboutSite extends StatelessWidget {
                         Flexible(
                           child: Text(
                             'My name is Try Chansak, and I am a student at the Institute of Technology of Cambodia, majoring in Telecommunication and Network Engineering. I am highly passionate about technology and have hands-on experience in development through my work in DC Lab and Fab Lab. I am committed to continuously improving my skills and knowledge and will dedicate my best efforts to ensuring the success of every project I undertake.',
+                            style: TextStyle(color: AppColors.text),
                           ),
                         ),
                         SizedBox(width: 20),
@@ -614,7 +672,10 @@ class AboutSite extends StatelessWidget {
                     SizedBox(height: 10),
                     Text(
                       'chansaktry168@gmail.com',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.text,
+                      ),
                     ),
                     SizedBox(height: 10),
                     Row(
@@ -626,7 +687,7 @@ class AboutSite extends StatelessWidget {
                             margin: EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
-                              color: Colors.black,
+                              color: AppColors.surface,
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -645,11 +706,13 @@ class AboutSite extends StatelessWidget {
                                   style: TextStyle(
                                     fontFamily: 'MomoTrustDisplay',
                                     fontSize: 12,
+                                    color: AppColors.text,
                                   ),
                                 ),
                                 SizedBox(height: 10),
                                 Text(
                                   'Turn ideas into functional applications by designing, developing, and maintaining efficient software systems that solve real-world problems.',
+                                  style: TextStyle(color: AppColors.muted),
                                 ),
                               ],
                             ),
@@ -661,7 +724,7 @@ class AboutSite extends StatelessWidget {
                             margin: EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
-                              color: Colors.black,
+                              color: AppColors.surface,
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -680,11 +743,13 @@ class AboutSite extends StatelessWidget {
                                   style: TextStyle(
                                     fontFamily: 'MomoTrustDisplay',
                                     fontSize: 12,
+                                    color: AppColors.text,
                                   ),
                                 ),
                                 SizedBox(height: 10),
                                 Text(
                                   'Plan and implement secure, high-performance communication networks to ensure reliable data transmission and system connectivity.',
+                                  style: TextStyle(color: AppColors.muted),
                                 ),
                               ],
                             ),
@@ -696,7 +761,7 @@ class AboutSite extends StatelessWidget {
                             margin: EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
-                              color: Colors.black,
+                              color: AppColors.surface,
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -706,7 +771,7 @@ class AboutSite extends StatelessWidget {
                                   margin: EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(12),
-                                    color: Colors.red[900],
+                                    color: Colors.red,
                                   ),
                                   child: Icon(Icons.cell_tower),
                                 ),
@@ -715,11 +780,13 @@ class AboutSite extends StatelessWidget {
                                   style: TextStyle(
                                     fontFamily: 'MomoTrustDisplay',
                                     fontSize: 12,
+                                    color: AppColors.text,
                                   ),
                                 ),
                                 SizedBox(height: 10),
                                 Text(
                                   'Work with telecommunication systems to support wireless, wired, and digital communication solutions for real-time connectivity.',
+                                  style: TextStyle(color: AppColors.muted),
                                 ),
                               ],
                             ),
@@ -752,20 +819,24 @@ class PersonalSite extends StatelessWidget {
           SizedBox(height: 50),
           Text(
             'Personal information',
-            style: TextStyle(fontFamily: 'MomoTrustDisplay', fontSize: 50),
+            style: TextStyle(
+              fontFamily: 'MomoTrustDisplay',
+              fontSize: 50,
+              color: AppColors.text,
+            ),
           ),
           SizedBox(height: 10),
           Center(
             child: SizedBox(
               width: 100,
-              child: Divider(thickness: 10, color: Colors.blue),
+              child: Divider(thickness: 10, color: AppColors.primary),
             ),
           ),
           SizedBox(height: 10),
           Center(
             child: Text(
               'Here you can find my personal details such as my age, birthplace, and general background information.',
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(color: AppColors.muted),
             ),
           ),
           SizedBox(height: 50),
@@ -804,12 +875,13 @@ class PersonalSite extends StatelessWidget {
                                 'Date of Birth:',
                                 style: TextStyle(
                                   fontFamily: 'MomoTrustDisplay',
+                                  color: AppColors.text,
                                 ),
                               ),
                               SizedBox(height: 10),
                               Text(
                                 '19/July/2004',
-                                style: TextStyle(color: Colors.grey),
+                                style: TextStyle(color: AppColors.muted),
                               ),
                             ],
                           ),
@@ -835,12 +907,13 @@ class PersonalSite extends StatelessWidget {
                                 'Gender:',
                                 style: TextStyle(
                                   fontFamily: 'MomoTrustDisplay',
+                                  color: AppColors.text,
                                 ),
                               ),
                               SizedBox(height: 10),
                               Text(
                                 'Male',
-                                style: TextStyle(color: Colors.grey),
+                                style: TextStyle(color: AppColors.muted),
                               ),
                             ],
                           ),
@@ -871,12 +944,13 @@ class PersonalSite extends StatelessWidget {
                                 'Birthplace',
                                 style: TextStyle(
                                   fontFamily: 'MomoTrustDisplay',
+                                  color: AppColors.text,
                                 ),
                               ),
                               SizedBox(height: 10),
                               Text(
                                 'Kampot',
-                                style: TextStyle(color: Colors.grey),
+                                style: TextStyle(color: AppColors.muted),
                               ),
                             ],
                           ),
@@ -902,12 +976,13 @@ class PersonalSite extends StatelessWidget {
                                 'Address',
                                 style: TextStyle(
                                   fontFamily: 'MomoTrustDisplay',
+                                  color: AppColors.text,
                                 ),
                               ),
                               SizedBox(height: 10),
                               Text(
                                 'Sola Str(371), Ou Baek K\'am, Sen Sok, Phnom Penh',
-                                style: TextStyle(color: Colors.grey),
+                                style: TextStyle(color: AppColors.muted),
                               ),
                             ],
                           ),
@@ -930,84 +1005,90 @@ class ProjectSite extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 1,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(Icons.alarm, color: Colors.amber, size: 50),
-                SizedBox(width: 20),
-                Text(
-                  'In Time Projects',
-                  style: TextStyle(
-                    fontFamily: 'MomoTrustDisplay',
-                    fontSize: 25,
-                  ),
+    return LayoutBuilder(
+      builder: (context, c) {
+        final isNarrow = c.maxWidth < 1100;
+
+        Widget stat(String big, String label) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                big,
+                style: const TextStyle(
+                  fontFamily: 'MomoTrustDisplay',
+                  fontSize: 35,
+                  fontWeight: FontWeight.w700,
                 ),
+              ),
+              Text(label),
+            ],
+          );
+        }
+
+        final left = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Icon(Icons.alarm, color: Colors.amber, size: 50),
+            SizedBox(width: 16),
+            Text(
+              'In Time Projects',
+              style: TextStyle(fontFamily: 'MomoTrustDisplay', fontSize: 25),
+            ),
+          ],
+        );
+
+        final right = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Icon(Icons.check_circle, color: Colors.blue, size: 40),
+            SizedBox(width: 12),
+            Text('Project Done'),
+          ],
+        );
+
+        if (isNarrow) {
+          // Wrap = no overflow
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 40,
+              runSpacing: 24,
+              children: [
+                left,
+                stat('1+', 'Years of Experience'),
+                stat('5+', 'Projects Completed'),
+                stat('5+', 'Project approved'),
+                right,
               ],
             ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Row(
-              spacing: 100,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Text(
-                      '1+',
-                      style: TextStyle(
-                        fontFamily: 'MomoTrustDisplay',
-                        fontSize: 35,
-                      ),
-                    ),
-                    Text('Years of Experience'),
+          );
+        }
+
+        // Wide screens keep Row layout
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              Expanded(flex: 2, child: Center(child: left)),
+              Expanded(
+                flex: 5,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    stat('1+', 'Years of Experience'),
+                    stat('5+', 'Projects Completed'),
+                    stat('5+', 'Project approved'),
                   ],
                 ),
-                Column(
-                  children: <Widget>[
-                    Text(
-                      '5+',
-                      style: TextStyle(
-                        fontFamily: 'MomoTrustDisplay',
-                        fontSize: 35,
-                      ),
-                    ),
-                    Text('Projects Completed'),
-                  ],
-                ),
-                Column(
-                  children: <Widget>[
-                    Text(
-                      '5+',
-                      style: TextStyle(
-                        fontFamily: 'MomoTrustDisplay',
-                        fontSize: 35,
-                      ),
-                    ),
-                    Text('Project approved'),
-                  ],
-                ),
-              ],
-            ),
+              ),
+              Expanded(flex: 2, child: Center(child: right)),
+            ],
           ),
-          Expanded(
-            flex: 1,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(Icons.check_circle, color: Colors.blue, size: 40),
-                SizedBox(width: 20),
-                Column(children: <Widget>[Text('Project Done'), Text('')]),
-              ],
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -1025,126 +1106,148 @@ class PortfolioSite extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          Text(
-            'Portfolio',
-            style: TextStyle(fontFamily: 'MomoTrustDisplay', fontSize: 50),
-          ),
-          SizedBox(height: 10),
-          Container(
-            width: 100,
-            child: Divider(thickness: 10, color: Colors.blue),
-          ),
-          SizedBox(height: 20),
-          Text(
-            'I create innovative and user-friendly software and network solutions that combine functionality, creativity, and seamless user experiences.',
-            style: TextStyle(color: Colors.grey),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(height: 50),
-                    Container(
-                      width: 300,
-                      height: 900,
-                      child: Column(
-                        children: <Widget>[
-                          Image.asset(about_me_web),
-                          SizedBox(height: 20),
-                          Text(
-                            'About me website build with HTML',
-                            style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 1),
+        child: Column(
+          children: <Widget>[
+            Text(
+              'Portfolio',
+              style: TextStyle(
+                fontFamily: 'MomoTrustDisplay',
+                fontSize: 50,
+                color: AppColors.text,
               ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(height: 50),
-                    Container(
-                      width: 300,
-                      height: 250,
-                      child: Column(
-                        children: <Widget>[
-                          Image.asset(employee_management),
-                          SizedBox(height: 20),
-                          Text(
-                            'Employee Management build with C & C++',
-                            style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-                          ),
-                        ],
+            ),
+            SizedBox(height: 10),
+            Container(
+              width: 100,
+              child: Divider(thickness: 10, color: AppColors.primary),
+            ),
+            SizedBox(height: 20),
+            Text(
+              'I create innovative and user-friendly software and network solutions that combine functionality, creativity, and seamless user experiences.',
+              style: TextStyle(color: AppColors.muted),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(height: 50),
+                      Container(
+                        width: 300,
+                        height: 900,
+                        child: Column(
+                          children: <Widget>[
+                            Image.asset(about_me_web),
+                            SizedBox(height: 20),
+                            Text(
+                              'About me website build with HTML',
+                              style: TextStyle(
+                                fontFamily: 'MomoTrustDisplay',
+                                color: AppColors.text,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Container(
-                      width: 300,
-                      height: 710,
-                      child: Column(
-                        children: <Widget>[
-                          Image.asset(smart_watering),
-                          SizedBox(height: 20),
-                          Text(
-                            'Smart Watering system build with Arduino',
-                            style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(height: 50),
-                    Container(
-                      width: 300,
-                      height: 800,
-                      child: Column(
-                        children: <Widget>[
-                          Image.asset(puzzle_memory),
-                          SizedBox(height: 20),
-                          Text(
-                            'Memory puzzle game build with Jave & SceneBuilder',
-                            style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-                          ),
-                        ],
+                Expanded(
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(height: 50),
+                      Container(
+                        width: 300,
+                        height: 250,
+                        child: Column(
+                          children: <Widget>[
+                            Image.asset(employee_management),
+                            SizedBox(height: 20),
+                            Text(
+                              'Employee Management build with C & C++',
+                              style: TextStyle(
+                                fontFamily: 'MomoTrustDisplay',
+                                color: AppColors.text,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(height: 50),
-                    Container(
-                      width: 300,
-                      height: 900,
-                      child: Column(
-                        children: <Widget>[
-                          Image.asset(smart_home),
-                          SizedBox(height: 20),
-                          Text(
-                            'Smart Home build with ESP32 & Arduino',
-                            style: TextStyle(fontFamily: 'MomoTrustDisplay'),
-                          ),
-                        ],
+                      Container(
+                        width: 300,
+                        height: 710,
+                        child: Column(
+                          children: <Widget>[
+                            Image.asset(smart_watering),
+                            SizedBox(height: 20),
+                            Text(
+                              'Smart Watering system build with Arduino',
+                              style: TextStyle(
+                                fontFamily: 'MomoTrustDisplay',
+                                color: AppColors.text,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+                Expanded(
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(height: 50),
+                      Container(
+                        width: 300,
+                        height: 800,
+                        child: Column(
+                          children: <Widget>[
+                            Image.asset(puzzle_memory),
+                            SizedBox(height: 20),
+                            Text(
+                              'Memory puzzle game build with Jave & SceneBuilder',
+                              style: TextStyle(
+                                fontFamily: 'MomoTrustDisplay',
+                                color: AppColors.text,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(height: 50),
+                      Container(
+                        width: 300,
+                        height: 900,
+                        child: Column(
+                          children: <Widget>[
+                            Image.asset(smart_home),
+                            SizedBox(height: 20),
+                            Text(
+                              'Smart Home build with ESP32 & Arduino',
+                              style: TextStyle(
+                                fontFamily: 'MomoTrustDisplay',
+                                color: AppColors.text,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1160,27 +1263,31 @@ class RefereeSite extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
-        height: 500,
-        decoration: BoxDecoration(color: Color(0xFF0E0F1A)),
+        padding: const EdgeInsets.symmetric(vertical: 1),
+        decoration: BoxDecoration(color: AppColors.sectionBg),
         child: Column(
           children: <Widget>[
             SizedBox(height: 50),
             Text(
               'Referees',
-              style: TextStyle(fontFamily: 'MomoTrustDisplay', fontSize: 50),
+              style: TextStyle(
+                fontFamily: 'MomoTrustDisplay',
+                fontSize: 50,
+                color: AppColors.text,
+              ),
             ),
             SizedBox(height: 10),
             Center(
               child: SizedBox(
                 width: 100,
-                child: Divider(thickness: 10, color: Colors.blue),
+                child: Divider(thickness: 10, color: AppColors.primary),
               ),
             ),
             SizedBox(height: 10),
             Center(
               child: Text(
                 'Lecturers are available upon request to verify my academic performance and professional conduct.',
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(color: AppColors.muted),
               ),
             ),
             SizedBox(height: 50),
@@ -1191,12 +1298,12 @@ class RefereeSite extends StatelessWidget {
                 Expanded(
                   child: Container(
                     width: 250,
-                    decoration: BoxDecoration(color: Colors.black),
+                    decoration: BoxDecoration(color: AppColors.surface),
                     child: Column(
                       children: <Widget>[
                         Row(
                           children: <Widget>[
-                            Icon(Icons.person, size: 50),
+                            Icon(Icons.person, size: 50, color: AppColors.text),
                             Spacer(),
                             Image.asset(GTR, width: 75, height: 75),
                             SizedBox(width: 5),
@@ -1209,7 +1316,10 @@ class RefereeSite extends StatelessWidget {
                             Flexible(
                               child: Text(
                                 'Dr. SRENG Sokchenda',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.text,
+                                ),
                               ),
                             ),
                           ],
@@ -1219,34 +1329,54 @@ class RefereeSite extends StatelessWidget {
                             Flexible(
                               child: Text(
                                 'Head of Telecommunication and Network Engineering Department',
-                                style: TextStyle(color: Colors.grey),
+                                style: TextStyle(color: AppColors.muted),
                               ),
                             ),
                           ],
                         ),
                         Row(
                           children: <Widget>[
-                            Flexible(child: Icon(Icons.account_balance)),
+                            Flexible(
+                              child: Icon(
+                                Icons.account_balance,
+                                color: AppColors.text,
+                              ),
+                            ),
                             SizedBox(width: 5),
                             Flexible(
                               child: Text(
                                 'Institute of Technology of Cambodia',
+                                style: TextStyle(color: AppColors.text),
                               ),
                             ),
                           ],
                         ),
                         Row(
                           children: <Widget>[
-                            Flexible(child: Icon(Icons.phone)),
+                            Flexible(
+                              child: Icon(Icons.phone, color: AppColors.text),
+                            ),
                             SizedBox(width: 5),
-                            Flexible(child: Text('+85512407910')),
+                            Flexible(
+                              child: Text(
+                                '+85512407910',
+                                style: TextStyle(color: AppColors.text),
+                              ),
+                            ),
                           ],
                         ),
                         Row(
                           children: <Widget>[
-                            Flexible(child: Icon(Icons.email)),
+                            Flexible(
+                              child: Icon(Icons.email, color: AppColors.text),
+                            ),
                             SizedBox(width: 5),
-                            Flexible(child: Text('sokchenda@itc.edu.kh')),
+                            Flexible(
+                              child: Text(
+                                'sokchenda@itc.edu.kh',
+                                style: TextStyle(color: AppColors.text),
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -1256,12 +1386,12 @@ class RefereeSite extends StatelessWidget {
                 Expanded(
                   child: Container(
                     width: 250,
-                    decoration: BoxDecoration(color: Colors.black),
+                    decoration: BoxDecoration(color: AppColors.surface),
                     child: Column(
                       children: <Widget>[
                         Row(
                           children: <Widget>[
-                            Icon(Icons.person, size: 50),
+                            Icon(Icons.person, size: 50, color: AppColors.text),
                             Spacer(),
                             Image.asset(GTR, width: 75, height: 75),
                             SizedBox(width: 5),
@@ -1274,7 +1404,10 @@ class RefereeSite extends StatelessWidget {
                             Flexible(
                               child: Text(
                                 'Dr. THOURN Kosorl',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.text,
+                                ),
                               ),
                             ),
                           ],
@@ -1284,27 +1417,40 @@ class RefereeSite extends StatelessWidget {
                             Flexible(
                               child: Text(
                                 'Deputy Head of Telecommunication and Network Engineering Department',
-                                style: TextStyle(color: Colors.grey),
+                                style: TextStyle(color: AppColors.muted),
                               ),
                             ),
                           ],
                         ),
                         Row(
                           children: <Widget>[
-                            Flexible(child: Icon(Icons.account_balance)),
+                            Flexible(
+                              child: Icon(
+                                Icons.account_balance,
+                                color: AppColors.text,
+                              ),
+                            ),
                             SizedBox(width: 5),
                             Flexible(
                               child: Text(
                                 'Institute of Technology of Cambodia',
+                                style: TextStyle(color: AppColors.text),
                               ),
                             ),
                           ],
                         ),
                         Row(
                           children: <Widget>[
-                            Flexible(child: Icon(Icons.email)),
+                            Flexible(
+                              child: Icon(Icons.email, color: AppColors.text),
+                            ),
                             SizedBox(width: 5),
-                            Flexible(child: Text('kosorl@itc.edu.kh')),
+                            Flexible(
+                              child: Text(
+                                'kosorl@itc.edu.kh',
+                                style: TextStyle(color: AppColors.text),
+                              ),
+                            ),
                           ],
                         ),
                         SizedBox(height: 25),
@@ -1315,12 +1461,12 @@ class RefereeSite extends StatelessWidget {
                 Expanded(
                   child: Container(
                     width: 250,
-                    decoration: BoxDecoration(color: Colors.black),
+                    decoration: BoxDecoration(color: AppColors.surface),
                     child: Column(
                       children: <Widget>[
                         Row(
                           children: <Widget>[
-                            Icon(Icons.person, size: 50),
+                            Icon(Icons.person, size: 50, color: AppColors.text),
                             Spacer(),
                             Image.asset(GTR, width: 75, height: 75),
                             SizedBox(width: 5),
@@ -1333,7 +1479,10 @@ class RefereeSite extends StatelessWidget {
                             Flexible(
                               child: Text(
                                 'Dr. MUY Sengly',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.text,
+                                ),
                               ),
                             ),
                           ],
@@ -1343,27 +1492,40 @@ class RefereeSite extends StatelessWidget {
                             Flexible(
                               child: Text(
                                 'Lecture of Telecommunication and Network Engineering Department',
-                                style: TextStyle(color: Colors.grey),
+                                style: TextStyle(color: AppColors.muted),
                               ),
                             ),
                           ],
                         ),
                         Row(
                           children: <Widget>[
-                            Flexible(child: Icon(Icons.account_balance)),
+                            Flexible(
+                              child: Icon(
+                                Icons.account_balance,
+                                color: AppColors.text,
+                              ),
+                            ),
                             SizedBox(width: 5),
                             Flexible(
                               child: Text(
                                 'Institute of Technology of Cambodia',
+                                style: TextStyle(color: AppColors.text),
                               ),
                             ),
                           ],
                         ),
                         Row(
                           children: <Widget>[
-                            Flexible(child: Icon(Icons.email)),
+                            Flexible(
+                              child: Icon(Icons.email, color: AppColors.text),
+                            ),
                             SizedBox(width: 5),
-                            Flexible(child: Text('muysengly@gmail.com')),
+                            Flexible(
+                              child: Text(
+                                'muysengly@gmail.com',
+                                style: TextStyle(color: AppColors.text),
+                              ),
+                            ),
                           ],
                         ),
                         SizedBox(height: 25),
@@ -1420,7 +1582,7 @@ class MobileLayout extends StatelessWidget {
           ),
           Container(
             key: personalKey,
-            height: 820,
+            height: 850,
             alignment: Alignment.center,
             child: const MobielPersonalInfo(),
           ),
@@ -1469,6 +1631,34 @@ class MobileHome extends StatelessWidget {
     _launchUrl('/cv/my_cv.pdf');
   }
 
+  void _contactMe() async {
+    if (kIsWeb) {
+      final uri = Uri.parse(
+        'https://mail.google.com/mail/?view=cm&fs=1'
+        '&to=chansaktry168@gmail.com'
+        '&su=Contact%20from%20CV%20Website'
+        '&body=Hello%20Try,%0A%0AI%20saw%20your%20CV%20website%20and%20want%20to%20connect.',
+      );
+
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        throw 'Could not open Gmail web';
+      }
+    } else {
+      final uri = Uri(
+        scheme: 'mailto',
+        path: 'chansaktry168@gmail.com',
+        queryParameters: {
+          'subject': 'Contact from CV Website',
+          'body': 'Hello Try,\n\nI saw your CV website and want to connect.',
+        },
+      );
+
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        throw 'Could not open email app';
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -1506,13 +1696,14 @@ class MobileHome extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'MomoTrustDisplay',
                           fontSize: 15,
+                          color: AppColors.text,
                         ),
                       ),
                       Text(
                         'Try Chansak',
                         style: TextStyle(
                           fontFamily: 'MomoTrustDisplay',
-                          color: Colors.blue,
+                          color: AppColors.primary,
                           fontSize: 15,
                         ),
                       ),
@@ -1526,6 +1717,7 @@ class MobileHome extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'MomoTrustDisplay',
                           fontSize: 15,
+                          color: AppColors.text,
                         ),
                       ),
                     ],
@@ -1539,7 +1731,7 @@ class MobileHome extends StatelessWidget {
                           style: TextStyle(
                             fontFamily: 'MomoTrustDisplay',
                             fontSize: 10,
-                            color: Colors.grey,
+                            color: AppColors.muted,
                           ),
                         ),
                       ),
@@ -1549,7 +1741,10 @@ class MobileHome extends StatelessWidget {
                   Row(
                     children: <Widget>[
                       SizedBox(width: 50),
-                      Text('Follow me'),
+                      Text(
+                        'Follow me',
+                        style: TextStyle(color: AppColors.muted),
+                      ),
                       Wrap(
                         children: <Widget>[
                           SizedBox(width: 5),
@@ -1609,19 +1804,22 @@ class MobileHome extends StatelessWidget {
                       SizedBox(width: 50),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.purple[600],
+                          backgroundColor: Colors.blue,
                         ),
                         onPressed: () {
-                          _openCV();
+                          _contactMe();
                         },
-                        child: Text('View CV'),
+                        child: Text('Contact me'),
                       ),
                       SizedBox(width: 20),
                       OutlinedButton(
                         onPressed: () {
                           _launchUrl('cv/my_cv.pdf');
                         },
-                        child: Text('Download CV'),
+                        child: Text(
+                          'Download CV',
+                          style: TextStyle(color: AppColors.text),
+                        ),
                       ),
                     ],
                   ),
@@ -1642,20 +1840,24 @@ class MobileAbout extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
-        height: 1100,
+        height: 1200,
         width: 600,
-        decoration: BoxDecoration(color: Color(0xFF0E0F1A)),
+        decoration: BoxDecoration(color: AppColors.sectionBg),
         child: Center(
           child: Column(
             children: <Widget>[
               SizedBox(height: 10),
               Text(
                 'About me',
-                style: TextStyle(fontFamily: 'MomoTrustDisplay', fontSize: 25),
+                style: TextStyle(
+                  fontFamily: 'MomoTrustDisplay',
+                  fontSize: 25,
+                  color: AppColors.text,
+                ),
               ),
               SizedBox(
                 width: 75,
-                child: Divider(thickness: 10, color: Colors.blue),
+                child: Divider(thickness: 10, color: AppColors.primary),
               ),
               SizedBox(height: 25),
               Column(
@@ -1667,6 +1869,7 @@ class MobileAbout extends StatelessWidget {
                       Flexible(
                         child: Text(
                           'My name is Try Chansak, and I am a student at the Institute of Technology of Cambodia, majoring in Telecommunication and Network Engineering. I am highly passionate about technology and have hands-on experience in development through my work in DC Lab and Fab Lab. I am committed to continuously improving my skills and knowledge and will dedicate my best efforts to ensuring the success of every project I undertake.',
+                          style: TextStyle(color: AppColors.text),
                         ),
                       ),
                       SizedBox(width: 20),
@@ -1678,7 +1881,10 @@ class MobileAbout extends StatelessWidget {
                       SizedBox(width: 20),
                       Text(
                         'chansaktry168@gmail.com',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.text,
+                        ),
                       ),
                     ],
                   ),
@@ -1692,10 +1898,10 @@ class MobileAbout extends StatelessWidget {
                     child: Container(
                       padding: EdgeInsets.all(16),
                       margin: EdgeInsets.all(8),
-                      height: 375,
+                      height: 430,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        color: Colors.black,
+                        color: AppColors.surface,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1715,11 +1921,13 @@ class MobileAbout extends StatelessWidget {
                             style: TextStyle(
                               fontFamily: 'MomoTrustDisplay',
                               fontSize: 12,
+                              color: AppColors.text,
                             ),
                           ),
                           SizedBox(height: 20),
                           Text(
                             'Turn ideas into functional applications by designing, developing, and maintaining efficient software systems that solve real-world problems.',
+                            style: TextStyle(color: AppColors.muted),
                           ),
                         ],
                       ),
@@ -1729,10 +1937,10 @@ class MobileAbout extends StatelessWidget {
                     child: Container(
                       padding: EdgeInsets.all(16),
                       margin: EdgeInsets.all(8),
-                      height: 375,
+                      height: 430,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        color: Colors.black,
+                        color: AppColors.surface,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1752,11 +1960,13 @@ class MobileAbout extends StatelessWidget {
                             style: TextStyle(
                               fontFamily: 'MomoTrustDisplay',
                               fontSize: 12,
+                              color: AppColors.text,
                             ),
                           ),
                           SizedBox(height: 20),
                           Text(
                             'Plan and implement secure, high-performance communication networks to ensure reliable data transmission and system connectivity.',
+                            style: TextStyle(color: AppColors.muted),
                           ),
                         ],
                       ),
@@ -1766,10 +1976,10 @@ class MobileAbout extends StatelessWidget {
                     child: Container(
                       padding: EdgeInsets.all(16),
                       margin: EdgeInsets.all(8),
-                      height: 375,
+                      height: 430,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        color: Colors.black,
+                        color: AppColors.surface,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1789,11 +1999,13 @@ class MobileAbout extends StatelessWidget {
                             style: TextStyle(
                               fontFamily: 'MomoTrustDisplay',
                               fontSize: 12,
+                              color: AppColors.text,
                             ),
                           ),
                           SizedBox(height: 20),
                           Text(
                             'Work with telecommunication systems to support wireless, wired, and digital communication solutions for real-time connectivity.',
+                            style: TextStyle(color: AppColors.muted),
                           ),
                         ],
                       ),
@@ -1811,6 +2023,7 @@ class MobileAbout extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 100,
                       fontFamily: 'MomoTrustDisplay',
+                      color: AppColors.text,
                     ),
                   ),
                   Text(
@@ -1818,6 +2031,7 @@ class MobileAbout extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 50,
                       fontFamily: 'MomoTrustDisplay',
+                      color: AppColors.text,
                     ),
                   ),
                   Text(
@@ -1825,6 +2039,7 @@ class MobileAbout extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 50,
                       fontFamily: 'MomoTrustDisplay',
+                      color: AppColors.text,
                     ),
                   ),
                   Text(
@@ -1832,6 +2047,7 @@ class MobileAbout extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 50,
                       fontFamily: 'MomoTrustDisplay',
+                      color: AppColors.text,
                     ),
                   ),
                 ],
@@ -1857,11 +2073,15 @@ class MobielPersonalInfo extends StatelessWidget {
           SizedBox(height: 20),
           Text(
             'Personal Information',
-            style: TextStyle(fontFamily: 'MomoTrustDisplay', fontSize: 25),
+            style: TextStyle(
+              fontFamily: 'MomoTrustDisplay',
+              fontSize: 25,
+              color: AppColors.text,
+            ),
           ),
           SizedBox(
             width: 75,
-            child: Divider(thickness: 10, color: Colors.blue),
+            child: Divider(thickness: 10, color: AppColors.primary),
           ),
           SizedBox(height: 25),
           Row(
@@ -1870,7 +2090,7 @@ class MobielPersonalInfo extends StatelessWidget {
               Flexible(
                 child: Text(
                   'Here you can find my personal details such as my age, birthplace, and general background information.',
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: AppColors.muted),
                 ),
               ),
             ],
@@ -1902,11 +2122,14 @@ class MobielPersonalInfo extends StatelessWidget {
                         SizedBox(height: 10),
                         Text(
                           'Birth of Date:',
-                          style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                          style: TextStyle(
+                            fontFamily: 'MomoTrustDisplay',
+                            color: AppColors.text,
+                          ),
                         ),
                         Text(
                           '19/July/2004',
-                          style: TextStyle(color: Colors.grey),
+                          style: TextStyle(color: AppColors.muted),
                         ),
                       ],
                     ),
@@ -1926,9 +2149,12 @@ class MobielPersonalInfo extends StatelessWidget {
                         SizedBox(height: 10),
                         Text(
                           'Gender:',
-                          style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                          style: TextStyle(
+                            fontFamily: 'MomoTrustDisplay',
+                            color: AppColors.text,
+                          ),
                         ),
-                        Text('Male', style: TextStyle(color: Colors.grey)),
+                        Text('Male', style: TextStyle(color: AppColors.muted)),
                       ],
                     ),
                   ),
@@ -1952,9 +2178,15 @@ class MobielPersonalInfo extends StatelessWidget {
                         SizedBox(height: 10),
                         Text(
                           'Birthplace:',
-                          style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                          style: TextStyle(
+                            fontFamily: 'MomoTrustDisplay',
+                            color: AppColors.text,
+                          ),
                         ),
-                        Text('Kampot', style: TextStyle(color: Colors.grey)),
+                        Text(
+                          'Kampot',
+                          style: TextStyle(color: AppColors.muted),
+                        ),
                         SizedBox(height: 20),
                       ],
                     ),
@@ -1974,7 +2206,10 @@ class MobielPersonalInfo extends StatelessWidget {
                         SizedBox(height: 10),
                         Text(
                           'Address:',
-                          style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                          style: TextStyle(
+                            fontFamily: 'MomoTrustDisplay',
+                            color: AppColors.text,
+                          ),
                         ),
                         Row(
                           children: <Widget>[
@@ -1982,7 +2217,7 @@ class MobielPersonalInfo extends StatelessWidget {
                             Flexible(
                               child: Text(
                                 'Sola Str(371), Ou Baek K\'am, Sen Sok, Phnom Penh',
-                                style: TextStyle(color: Colors.grey),
+                                style: TextStyle(color: AppColors.muted),
                               ),
                             ),
                             SizedBox(width: 10),
@@ -2019,7 +2254,10 @@ class MobileProject extends StatelessWidget {
                     SizedBox(width: 10),
                     Text(
                       'In Time Projects',
-                      style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                      style: TextStyle(
+                        fontFamily: 'MomoTrustDisplay',
+                        color: AppColors.text,
+                      ),
                     ),
                   ],
                 ),
@@ -2028,11 +2266,18 @@ class MobileProject extends StatelessWidget {
                 child: Row(
                   children: <Widget>[
                     SizedBox(width: 20),
-                    Icon(Icons.check_circle, color: Colors.blue, size: 40),
+                    Icon(
+                      Icons.check_circle,
+                      color: AppColors.primary,
+                      size: 40,
+                    ),
                     SizedBox(width: 10),
                     Text(
                       'Project Done',
-                      style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                      style: TextStyle(
+                        fontFamily: 'MomoTrustDisplay',
+                        color: AppColors.text,
+                      ),
                     ),
                   ],
                 ),
@@ -2050,10 +2295,14 @@ class MobileProject extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'MomoTrustDisplay',
                         fontSize: 25,
+                        color: AppColors.text,
                       ),
                     ),
                     SizedBox(height: 10),
-                    Text('Years of Experience'),
+                    Text(
+                      'Years of Experience',
+                      style: TextStyle(color: AppColors.muted),
+                    ),
                   ],
                 ),
               ),
@@ -2065,10 +2314,14 @@ class MobileProject extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'MomoTrustDisplay',
                         fontSize: 25,
+                        color: AppColors.text,
                       ),
                     ),
                     SizedBox(height: 10),
-                    Text('Project Completed'),
+                    Text(
+                      'Project Completed',
+                      style: TextStyle(color: AppColors.muted),
+                    ),
                   ],
                 ),
               ),
@@ -2080,10 +2333,14 @@ class MobileProject extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'MomoTrustDisplay',
                         fontSize: 25,
+                        color: AppColors.text,
                       ),
                     ),
                     SizedBox(height: 10),
-                    Text('Project Approved'),
+                    Text(
+                      'Project Approved',
+                      style: TextStyle(color: AppColors.muted),
+                    ),
                   ],
                 ),
               ),
@@ -2110,10 +2367,17 @@ class MobilePortfolio extends StatelessWidget {
       children: <Widget>[
         Text(
           'Portfolio',
-          style: TextStyle(fontFamily: 'MomoTrustDisplay', fontSize: 25),
+          style: TextStyle(
+            fontFamily: 'MomoTrustDisplay',
+            fontSize: 25,
+            color: AppColors.text,
+          ),
         ),
         SizedBox(height: 10),
-        Container(width: 75, child: Divider(thickness: 10, color: Colors.blue)),
+        Container(
+          width: 75,
+          child: Divider(thickness: 10, color: AppColors.primary),
+        ),
         SizedBox(height: 20),
         Row(
           children: <Widget>[
@@ -2121,7 +2385,7 @@ class MobilePortfolio extends StatelessWidget {
             Flexible(
               child: Text(
                 'I create innovative and user-friendly software and network solutions that combine functionality, creativity, and seamless user experiences.',
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(color: AppColors.muted),
               ),
             ),
           ],
@@ -2142,7 +2406,10 @@ class MobilePortfolio extends StatelessWidget {
                         SizedBox(height: 10),
                         Text(
                           'About me website build with HTML',
-                          style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                          style: TextStyle(
+                            fontFamily: 'MomoTrustDisplay',
+                            color: AppColors.text,
+                          ),
                         ),
                       ],
                     ),
@@ -2163,7 +2430,10 @@ class MobilePortfolio extends StatelessWidget {
                         SizedBox(height: 10),
                         Text(
                           'Employee Management build with C & C++',
-                          style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                          style: TextStyle(
+                            fontFamily: 'MomoTrustDisplay',
+                            color: AppColors.text,
+                          ),
                         ),
                       ],
                     ),
@@ -2177,7 +2447,10 @@ class MobilePortfolio extends StatelessWidget {
                         SizedBox(height: 10),
                         Text(
                           'Smart Watering system build with Arduino',
-                          style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                          style: TextStyle(
+                            fontFamily: 'MomoTrustDisplay',
+                            color: AppColors.text,
+                          ),
                         ),
                       ],
                     ),
@@ -2198,7 +2471,10 @@ class MobilePortfolio extends StatelessWidget {
                         SizedBox(height: 10),
                         Text(
                           'Memory puzzle game build with Jave & SceneBuilder',
-                          style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                          style: TextStyle(
+                            fontFamily: 'MomoTrustDisplay',
+                            color: AppColors.text,
+                          ),
                         ),
                       ],
                     ),
@@ -2219,7 +2495,10 @@ class MobilePortfolio extends StatelessWidget {
                         SizedBox(height: 10),
                         Text(
                           'Smart Home build with ESP32 & Arduino',
-                          style: TextStyle(fontFamily: 'MomoTrustDisplay'),
+                          style: TextStyle(
+                            fontFamily: 'MomoTrustDisplay',
+                            color: AppColors.text,
+                          ),
                         ),
                       ],
                     ),
@@ -2245,18 +2524,22 @@ class MobileReferees extends StatelessWidget {
     return SingleChildScrollView(
       child: Container(
         height: 400,
-        decoration: BoxDecoration(color: Color(0xFF0E0F1A)),
+        decoration: BoxDecoration(color: AppColors.sectionBg),
         child: Column(
           children: <Widget>[
             Text(
               'Referees',
-              style: TextStyle(fontFamily: 'MomoTrustDisplay', fontSize: 25),
+              style: TextStyle(
+                fontFamily: 'MomoTrustDisplay',
+                fontSize: 25,
+                color: AppColors.text,
+              ),
             ),
             SizedBox(height: 10),
             Center(
               child: SizedBox(
                 width: 75,
-                child: Divider(thickness: 10, color: Colors.blue),
+                child: Divider(thickness: 10, color: AppColors.primary),
               ),
             ),
             SizedBox(height: 10),
@@ -2267,7 +2550,7 @@ class MobileReferees extends StatelessWidget {
                   Flexible(
                     child: Text(
                       'Lecturers are available upon request to verify my academic performance and professional conduct.',
-                      style: TextStyle(color: Colors.grey),
+                      style: TextStyle(color: AppColors.muted),
                     ),
                   ),
                 ],
@@ -2281,13 +2564,13 @@ class MobileReferees extends StatelessWidget {
                 Expanded(
                   child: Container(
                     width: 250,
-                    decoration: BoxDecoration(color: Colors.black),
+                    decoration: BoxDecoration(color: AppColors.surface),
                     child: Column(
                       children: <Widget>[
                         SizedBox(height: 10),
                         Row(
                           children: <Widget>[
-                            Icon(Icons.person, size: 25),
+                            Icon(Icons.person, size: 25, color: AppColors.text),
                             Spacer(),
                             Image.asset(GTR, width: 25, height: 25),
                             SizedBox(width: 5),
@@ -2303,6 +2586,7 @@ class MobileReferees extends StatelessWidget {
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 10,
+                                  color: AppColors.text,
                                 ),
                               ),
                             ),
@@ -2314,7 +2598,7 @@ class MobileReferees extends StatelessWidget {
                               child: Text(
                                 'Head of Telecommunication and Network Engineering Department',
                                 style: TextStyle(
-                                  color: Colors.grey,
+                                  color: AppColors.muted,
                                   fontSize: 10,
                                 ),
                               ),
@@ -2325,13 +2609,20 @@ class MobileReferees extends StatelessWidget {
                         Row(
                           children: <Widget>[
                             Flexible(
-                              child: Icon(Icons.account_balance, size: 25),
+                              child: Icon(
+                                Icons.account_balance,
+                                size: 25,
+                                color: AppColors.text,
+                              ),
                             ),
                             SizedBox(width: 5),
                             Flexible(
                               child: Text(
                                 'Institute of Technology of Cambodia',
-                                style: TextStyle(fontSize: 10),
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: AppColors.text,
+                                ),
                               ),
                             ),
                           ],
@@ -2339,12 +2630,21 @@ class MobileReferees extends StatelessWidget {
                         SizedBox(height: 10),
                         Row(
                           children: <Widget>[
-                            Flexible(child: Icon(Icons.phone, size: 25)),
+                            Flexible(
+                              child: Icon(
+                                Icons.phone,
+                                size: 25,
+                                color: AppColors.text,
+                              ),
+                            ),
                             SizedBox(width: 5),
                             Flexible(
                               child: Text(
                                 '+85512407910',
-                                style: TextStyle(fontSize: 10),
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: AppColors.text,
+                                ),
                               ),
                             ),
                           ],
@@ -2352,12 +2652,17 @@ class MobileReferees extends StatelessWidget {
                         SizedBox(height: 10),
                         Row(
                           children: <Widget>[
-                            Flexible(child: Icon(Icons.email)),
+                            Flexible(
+                              child: Icon(Icons.email, color: AppColors.text),
+                            ),
                             SizedBox(width: 5),
                             Flexible(
                               child: Text(
                                 'sokchenda@itc.edu.kh',
-                                style: TextStyle(fontSize: 10),
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: AppColors.text,
+                                ),
                               ),
                             ),
                           ],
@@ -2370,13 +2675,13 @@ class MobileReferees extends StatelessWidget {
                 Expanded(
                   child: Container(
                     width: 250,
-                    decoration: BoxDecoration(color: Colors.black),
+                    decoration: BoxDecoration(color: AppColors.surface),
                     child: Column(
                       children: <Widget>[
                         SizedBox(height: 10),
                         Row(
                           children: <Widget>[
-                            Icon(Icons.person, size: 25),
+                            Icon(Icons.person, size: 25, color: AppColors.text),
                             Spacer(),
                             Image.asset(GTR, width: 25, height: 25),
                             SizedBox(width: 5),
@@ -2392,6 +2697,7 @@ class MobileReferees extends StatelessWidget {
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 10,
+                                  color: AppColors.text,
                                 ),
                               ),
                             ),
@@ -2403,7 +2709,7 @@ class MobileReferees extends StatelessWidget {
                               child: Text(
                                 'Deputy Head of Telecommunication and Network Engineering Department',
                                 style: TextStyle(
-                                  color: Colors.grey,
+                                  color: AppColors.muted,
                                   fontSize: 10,
                                 ),
                               ),
@@ -2413,12 +2719,20 @@ class MobileReferees extends StatelessWidget {
                         SizedBox(height: 20),
                         Row(
                           children: <Widget>[
-                            Flexible(child: Icon(Icons.account_balance)),
+                            Flexible(
+                              child: Icon(
+                                Icons.account_balance,
+                                color: AppColors.text,
+                              ),
+                            ),
                             SizedBox(width: 5),
                             Flexible(
                               child: Text(
                                 'Institute of Technology of Cambodia',
-                                style: TextStyle(fontSize: 10),
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: AppColors.text,
+                                ),
                               ),
                             ),
                           ],
@@ -2426,12 +2740,17 @@ class MobileReferees extends StatelessWidget {
                         SizedBox(height: 10),
                         Row(
                           children: <Widget>[
-                            Flexible(child: Icon(Icons.email)),
+                            Flexible(
+                              child: Icon(Icons.email, color: AppColors.text),
+                            ),
                             SizedBox(width: 5),
                             Flexible(
                               child: Text(
                                 'kosorl@itc.edu.kh',
-                                style: TextStyle(fontSize: 10),
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: AppColors.text,
+                                ),
                               ),
                             ),
                           ],
@@ -2444,13 +2763,13 @@ class MobileReferees extends StatelessWidget {
                 Expanded(
                   child: Container(
                     width: 250,
-                    decoration: BoxDecoration(color: Colors.black),
+                    decoration: BoxDecoration(color: AppColors.surface),
                     child: Column(
                       children: <Widget>[
                         SizedBox(height: 10),
                         Row(
                           children: <Widget>[
-                            Icon(Icons.person, size: 25),
+                            Icon(Icons.person, size: 25, color: AppColors.text),
                             Spacer(),
                             Image.asset(GTR, width: 25, height: 25),
                             SizedBox(width: 5),
@@ -2466,6 +2785,7 @@ class MobileReferees extends StatelessWidget {
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 10,
+                                  color: AppColors.text,
                                 ),
                               ),
                             ),
@@ -2477,7 +2797,7 @@ class MobileReferees extends StatelessWidget {
                               child: Text(
                                 'Lecture of Telecommunication and Network Engineering Department',
                                 style: TextStyle(
-                                  color: Colors.grey,
+                                  color: AppColors.muted,
                                   fontSize: 10,
                                 ),
                               ),
@@ -2487,12 +2807,20 @@ class MobileReferees extends StatelessWidget {
                         SizedBox(height: 20),
                         Row(
                           children: <Widget>[
-                            Flexible(child: Icon(Icons.account_balance)),
+                            Flexible(
+                              child: Icon(
+                                Icons.account_balance,
+                                color: AppColors.text,
+                              ),
+                            ),
                             SizedBox(width: 5),
                             Flexible(
                               child: Text(
                                 'Institute of Technology of Cambodia',
-                                style: TextStyle(fontSize: 10),
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: AppColors.text,
+                                ),
                               ),
                             ),
                           ],
@@ -2500,12 +2828,17 @@ class MobileReferees extends StatelessWidget {
                         SizedBox(height: 10),
                         Row(
                           children: <Widget>[
-                            Flexible(child: Icon(Icons.email)),
+                            Flexible(
+                              child: Icon(Icons.email, color: AppColors.text),
+                            ),
                             SizedBox(width: 5),
                             Flexible(
                               child: Text(
                                 'muysengly@gmail.com',
-                                style: TextStyle(fontSize: 10),
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: AppColors.text,
+                                ),
                               ),
                             ),
                           ],
