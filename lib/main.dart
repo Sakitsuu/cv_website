@@ -1674,7 +1674,6 @@ class MobileHome extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      SizedBox(width: 20),
                       Container(
                         padding: EdgeInsets.all(16),
                         margin: EdgeInsets.all(8),
